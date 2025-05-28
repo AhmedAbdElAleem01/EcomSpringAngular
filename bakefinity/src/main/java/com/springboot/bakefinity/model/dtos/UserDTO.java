@@ -1,5 +1,4 @@
-package com.bakefinity.model.dtos;
-
+package com.springboot.bakefinity.model.dtos;
 import java.time.LocalDateTime;
 import java.util.Date;
 

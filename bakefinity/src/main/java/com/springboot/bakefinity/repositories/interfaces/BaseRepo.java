@@ -1,4 +1,4 @@
-package com.bakefinity.controller.repositories.interfaces;
+package com.springboot.bakefinity.repositories.interfaces;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.bakefinity.model.entities;
+package com.springboot.bakefinity.model.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

@@ -1,6 +1,6 @@
-package com.bakefinity.model.dtos;
+package com.springboot.bakefinity.model.dtos;
 
-import com.bakefinity.model.entities.Product;
+import com.springboot.bakefinity.model.entities.Product;
 
 public class ProductDTO {
     private int id;

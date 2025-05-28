@@ -1,6 +1,6 @@
-package com.bakefinity.controller.repositories.interfaces;
+package com.springboot.bakefinity.repositories.interfaces;
 
-import com.bakefinity.model.dtos.AddressDTO;
+import com.springboot.bakefinity.model.dtos.AddressDTO;
 
 import java.sql.SQLException;
 import java.util.Optional;

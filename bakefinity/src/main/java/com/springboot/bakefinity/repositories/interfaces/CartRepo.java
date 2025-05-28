@@ -1,6 +1,7 @@
-package com.bakefinity.controller.repositories.interfaces;
+package com.springboot.bakefinity.repositories.interfaces;
 
-import com.bakefinity.model.entities.CartItem;
+import com.springboot.bakefinity.model.entities.CartItem;
+
 import java.util.List;
 
 public interface CartRepo{

@@ -1,7 +1,6 @@
-package com.bakefinity.model.entities;
+package com.springboot.bakefinity.model.entities;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 
 @Entity

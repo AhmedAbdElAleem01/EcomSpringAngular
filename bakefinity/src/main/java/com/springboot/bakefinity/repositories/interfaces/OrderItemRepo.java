@@ -1,6 +1,7 @@
-package com.bakefinity.controller.repositories.interfaces;
+package com.springboot.bakefinity.repositories.interfaces;
 
-import com.bakefinity.model.entities.OrderItem;
+import com.springboot.bakefinity.model.entities.OrderItem;
+
 import java.sql.SQLException;
 
 public interface OrderItemRepo {

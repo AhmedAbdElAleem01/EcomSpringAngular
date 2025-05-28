@@ -1,6 +1,6 @@
-package com.bakefinity.controller.repositories.interfaces;
+package com.springboot.bakefinity.repositories.interfaces;
 
-import com.bakefinity.model.dtos.UserInterestsDTO;
+import com.springboot.bakefinity.model.dtos.UserInterestsDTO;
 
 import java.sql.SQLException;
 import java.util.List;

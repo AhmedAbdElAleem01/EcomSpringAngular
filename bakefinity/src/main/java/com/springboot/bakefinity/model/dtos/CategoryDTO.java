@@ -1,6 +1,6 @@
-package com.bakefinity.model.dtos;
+package com.springboot.bakefinity.model.dtos;
 
-import com.bakefinity.model.entities.Category;
+import com.springboot.bakefinity.model.entities.Category;
 
 public class CategoryDTO {
     private int id;

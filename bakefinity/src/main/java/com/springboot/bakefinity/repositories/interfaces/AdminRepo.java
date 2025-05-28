@@ -1,10 +1,10 @@
-package com.bakefinity.controller.repositories.interfaces;
+package com.springboot.bakefinity.repositories.interfaces;
+
+import com.springboot.bakefinity.model.dtos.UserDTO;
 
 import java.util.Optional;
 
-import com.bakefinity.model.dtos.UserDTO;
-
 public interface AdminRepo {
-    public Optional<UserDTO> findByEmailAndPassword(String email ,String password); //login as admin
+    public Optional<UserDTO> findByEmailAndPassword(String email , String password); //login as admin
 }
 

@@ -1,9 +1,9 @@
-package com.bakefinity.model.dtos;
+package com.springboot.bakefinity.model.dtos;
+
+import com.springboot.bakefinity.model.enums.OrderStatus;
+import com.springboot.bakefinity.model.enums.PaymentMethod;
 
 import java.time.LocalDateTime;
-
-import com.bakefinity.model.enums.OrderStatus;
-import com.bakefinity.model.enums.PaymentMethod;
 
 public class OrderDTO {
     private int id;

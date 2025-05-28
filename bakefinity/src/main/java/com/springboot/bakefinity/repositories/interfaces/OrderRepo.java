@@ -1,12 +1,12 @@
-package com.bakefinity.controller.repositories.interfaces;
+package com.springboot.bakefinity.repositories.interfaces;
+
+import com.springboot.bakefinity.model.dtos.OrderDTO;
+import com.springboot.bakefinity.model.dtos.OrderItemDTO;
+import com.springboot.bakefinity.model.entities.Order;
+import com.springboot.bakefinity.model.enums.OrderStatus;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import com.bakefinity.model.dtos.OrderDTO;
-import com.bakefinity.model.dtos.OrderItemDTO;
-import com.bakefinity.model.entities.Order;
-import com.bakefinity.model.enums.OrderStatus;
 
 public interface OrderRepo{
     int create(OrderDTO order) throws SQLException;

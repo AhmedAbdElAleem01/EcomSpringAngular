@@ -1,10 +1,10 @@
-package com.bakefinity.controller.repositories.interfaces;
+package com.springboot.bakefinity.repositories.interfaces;
+
+import com.springboot.bakefinity.model.dtos.CategoryDTO;
+import com.springboot.bakefinity.model.entities.Category;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import com.bakefinity.model.dtos.CategoryDTO;
-import com.bakefinity.model.entities.Category;
 
 public interface CategoryRepo{
     Category get(int id) throws Exception;

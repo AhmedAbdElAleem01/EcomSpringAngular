@@ -1,4 +1,4 @@
-package com.bakefinity.model.dtos;
+package com.springboot.bakefinity.model.dtos;
 
 public class UserInterestsDTO {
     private int userId;

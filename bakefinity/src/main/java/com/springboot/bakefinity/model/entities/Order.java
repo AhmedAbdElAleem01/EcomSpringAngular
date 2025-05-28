@@ -1,4 +1,4 @@
-package com.bakefinity.model.entities;
+package com.springboot.bakefinity.model.entities;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

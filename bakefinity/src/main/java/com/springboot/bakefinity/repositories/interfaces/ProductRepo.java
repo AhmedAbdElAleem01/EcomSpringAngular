@@ -1,10 +1,9 @@
-package com.bakefinity.controller.repositories.interfaces;
+package com.springboot.bakefinity.repositories.interfaces;
+
+import com.springboot.bakefinity.model.dtos.ProductDTO;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import com.bakefinity.model.dtos.ProductDTO;
-import com.bakefinity.model.entities.Product;
 
 public interface ProductRepo extends BaseRepo<ProductDTO>{
     List<ProductDTO> getAllProducts() throws Exception;

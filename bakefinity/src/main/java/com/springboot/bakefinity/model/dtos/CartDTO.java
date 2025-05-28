@@ -1,6 +1,7 @@
-package com.bakefinity.model.dtos;
+package com.springboot.bakefinity.model.dtos;
 
-import com.bakefinity.model.entities.CartItemId;
+
+import com.springboot.bakefinity.model.entities.CartItemId;
 
 public class CartDTO {
     private Integer userId;

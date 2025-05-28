@@ -1,4 +1,4 @@
-package com.bakefinity.model.enums;
+package com.springboot.bakefinity.model.enums;
 
 public enum OrderStatus {
     PENDING,

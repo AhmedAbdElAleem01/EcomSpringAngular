@@ -1,8 +1,9 @@
-package com.bakefinity.controller.repositories.interfaces;
+package com.springboot.bakefinity.repositories.interfaces;
+
+import com.springboot.bakefinity.model.dtos.AddressDTO;
+import com.springboot.bakefinity.model.dtos.UserDTO;
 
 import java.util.Optional;
-
-import com.bakefinity.model.dtos.*;
 
 public interface ProfileRepo {    
     public Optional<UserDTO> updateCreditLimit(UserDTO user , double creditLimit);
