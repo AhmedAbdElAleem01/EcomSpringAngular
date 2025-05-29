@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.bakefinity.model.enums.OrderStatus;
-import com.bakefinity.model.enums.PaymentMethod;
+import com.springboot.bakefinity.model.enums.OrderStatus;
+import com.springboot.bakefinity.model.enums.PaymentMethod;
 import jakarta.persistence.*;
 
 @Entity
