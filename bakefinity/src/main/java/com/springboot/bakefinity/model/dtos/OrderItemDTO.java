@@ -2,6 +2,7 @@ package com.springboot.bakefinity.model.dtos;
 
 public class OrderItemDTO {
     private Integer userId;
+    private String userName;
     private Integer orderId;
     private Integer productId;
     private String productName;
@@ -17,9 +18,11 @@ public class OrderItemDTO {
     }
 
     public Integer getUserId() { return userId; }
+    public void setUserName(String userName) { this.userName = userName;}
+    public String getUserName() { return userName; }
     public void setUserId(Integer userId) { this.userId = userId; }
-    public Integer getOrderId() { return orderId; }
     public void setOrderId(Integer orderId) { this.orderId = orderId; }
+    public Integer getOrderId() { return orderId; }
     public Integer getProductId() { return productId; }
     public String getProductName() { return this.productName; }
     public void setProductName(String productName) { this.productName = productName; }

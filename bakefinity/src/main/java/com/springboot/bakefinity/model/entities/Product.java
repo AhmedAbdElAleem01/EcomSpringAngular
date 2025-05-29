@@ -7,8 +7,11 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.SQLDelete;
+
 @Entity
 @Table(name = "product")
+@SQLDelete(sql = "UPDATE product SET deleted = true WHERE id=?")  //override the delete command
 public class Product implements Serializable {
     private Integer id;
     private Category category;
@@ -18,6 +21,7 @@ public class Product implements Serializable {
     private String imageUrl;
     private Integer stockQuantity;
     private String ingredients;
+    private boolean deleted = Boolean.FALSE;
     private Set<OrderItem> orderItems = new HashSet<OrderItem>(0);
     private Set<CartItem> cartItems = new HashSet<CartItem>(0);
 
@@ -51,11 +55,15 @@ public class Product implements Serializable {
     public Integer getId() {
         return this.id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
-
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+    public boolean isDeleted() {
+        return deleted;
+    }
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId", nullable = false)
     public Category getCategory() {

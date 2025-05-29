@@ -1,9 +1,12 @@
 package com.springboot.bakefinity.services.interfaces;
 
+import com.springboot.bakefinity.exceptions.ValidationException;
 import com.springboot.bakefinity.model.dtos.ProductDTO;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
     List<ProductDTO> getAllProducts();
@@ -21,11 +24,9 @@ public interface ProductService {
     List<ProductDTO> getProductsByPage(int page, int pageSize);
     int getTotalProductCount();
    
-    boolean addNewProduct(String category, String name, String description, String price, String imageName,
-            String quantity, String ingredients) throws Exception;
-    boolean deleteProduct(int productId);
-    boolean updateProduct(ProductDTO product,String category, String name, String description, String price, String imageName,
-    String quantity, String ingredients) throws Exception;
+    ProductDTO addProduct(ProductDTO product , MultipartFile image) throws ValidationException;
+    void deleteProduct(int id);
+    ProductDTO updateProduct(int id, ProductDTO updatedProduct) throws ValidationException;
 
     boolean updateStockQuantity(int productId, int newQuantity) throws SQLException;
     List<ProductDTO> getProductsByCategoryAndPriceRange(int categoryId, double minPrice, double maxPrice, int page, int pageSize);
