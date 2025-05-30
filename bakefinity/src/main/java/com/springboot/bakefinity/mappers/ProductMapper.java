@@ -3,7 +3,6 @@ import org.mapstruct.Mapper;
 
 import com.springboot.bakefinity.model.dtos.ProductDTO;
 import com.springboot.bakefinity.model.entities.Product;
-
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
@@ -18,8 +17,9 @@ public interface ProductMapper {
 
     @Mappings({
         @Mapping(target = "cartItems", ignore = true),
-        @Mapping(target = "category", ignore = true),
         @Mapping(target = "orderItems", ignore = true),
+        @Mapping(source = "categoryId", target = "category.id"),
+        @Mapping(source = "categoryName", target = "category.name"),
         @Mapping(target = "id", ignore = true)
     })
     Product toEntity(ProductDTO dto);

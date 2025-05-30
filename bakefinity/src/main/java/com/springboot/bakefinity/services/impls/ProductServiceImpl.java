@@ -1,18 +1,6 @@
 package com.springboot.bakefinity.services.impls;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
+import com.springboot.bakefinity.exceptions.ResourceNotFoundException;
 import com.springboot.bakefinity.exceptions.ValidationException;
 import com.springboot.bakefinity.mappers.ProductMapper;
 import com.springboot.bakefinity.model.dtos.ProductDTO;
@@ -21,93 +9,133 @@ import com.springboot.bakefinity.model.entities.Product;
 import com.springboot.bakefinity.repositories.interfaces.CategoryRepo;
 import com.springboot.bakefinity.repositories.interfaces.ProductRepo;
 import com.springboot.bakefinity.services.interfaces.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.util.List;
+
 
 @Service
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
+
     @Autowired
     private ProductRepo productRepo;
 
     @Autowired
-    private CategoryRepo categoryRepo;
+    private ProductMapper productMapper;
 
     @Autowired
-    private ProductMapper productMapper;
+    private CategoryRepo categoryRepo;
 
     public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
 
+    @Transactional(readOnly = true)
     @Override
-    public List<ProductDTO> getAllProducts() {        
-        List<Product> products = productRepo.getAllProducts();
-        List<ProductDTO> productDTOs = new ArrayList<>();
-        for (Product product : products) {
-            productDTOs.add(productMapper.toDto(product));
-        }
-        return productDTOs;
+    public List<ProductDTO> getAllProducts() {
+        return productRepo.findAll()
+                .stream()
+                .map(productMapper::toDto)
+                .toList();
     }
 
-    @Override
-    public List<ProductDTO> getAllProductsWithCategoryName() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllProductsWithCategoryName'");
-    }
-
+    @Transactional(readOnly = true)
     @Override
     public List<ProductDTO> getProductsByCategory(int categoryId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByCategory'");
+        boolean categoryExists = categoryRepo.existsById(categoryId);
+        if (!categoryExists) {
+            throw new ResourceNotFoundException("There is no category with ID " + categoryId);
+        }
+        return productRepo.findByCategoryId(categoryId)
+                .stream()
+                .map(productMapper::toDto)
+                .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ProductDTO> getClassicProducts(int limit) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getClassicProducts'");
+        if(limit > productRepo.findAll().size()){
+            throw new ValidationException("your limit exceeds size");
+        }
+        return productRepo.findAllByOrderByStockQuantityDesc(PageRequest.of(0, limit))
+                .stream()
+                .map(productMapper::toDto)
+                .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ProductDTO> searchProductsByName(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchProductsByName'");
+        return productRepo.findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(productMapper::toDto)
+                .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public ProductDTO getProductById(int id) {
-        Product product = productRepo.findById(id)
-            .orElseThrow(() -> new ValidationException("Product not found with id: " + id));
-        return productMapper.toDto(product);
+    public ProductDTO getProductById(Long id) {
+        return productMapper.toDto(
+                productRepo.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("no such product"))
+        );
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<ProductDTO> getProductsByCategoryPage(int categoryId, int page, int pageSize) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByCategoryPage'");
+    public Page<ProductDTO> getProductsByCategoryPaged(int categoryId, int page, int pageSize) {
+        boolean categoryExists = categoryRepo.existsById(categoryId);
+        if (!categoryExists) {
+            throw new ResourceNotFoundException("There is no category with ID " + categoryId);
+        }
+
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return productRepo.findByCategoryId(categoryId, pageable)
+                .map(productMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public int getTotalProductsByCategory(int categoryId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTotalProductsByCategory'");
+        boolean categoryExists = categoryRepo.existsById(categoryId);
+        if (!categoryExists) {
+            throw new ResourceNotFoundException("There is no category with ID " + categoryId);
+        }
+        return productRepo.countByCategoryId(categoryId);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<ProductDTO> getProductsByPage(int page, int pageSize) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByPage'");
+    public Page<ProductDTO> getProductsByPage(int page, int pageSize, Sort sort) {
+        return productRepo.findAll(PageRequest.of(page, pageSize, sort))
+                .map(productMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public int getTotalProductCount() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTotalProductCount'");
+    public long getTotalProductCount() {
+        return productRepo.count();
     }
 
+    @Transactional
     @Override
     public ProductDTO addProduct(ProductDTO product, MultipartFile image) throws ValidationException {
-        // image upload
         String imageUrl = uploadProductImage(image);
-        product.setImageUrl(imageUrl);  
-        
-        // Validation
-        if (product.getName() == null || product.getName().trim().isEmpty()) 
+        product.setImageUrl(imageUrl);
+
+        if (product.getName() == null || product.getName().trim().isEmpty())
             throw new ValidationException("Product name is required.");
 
         if (product.getPrice() == null || product.getPrice() <= 0)
@@ -120,27 +148,29 @@ public class ProductServiceImpl implements ProductService{
             throw new ValidationException("Product category is required.");
 
         Category category = categoryRepo.findByName(product.getCategoryName())
-                        .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
         Product toSave = productMapper.toEntity(product);
         toSave.setCategory(category);
-        
-        return productMapper.toDto(productRepo.save(toSave)); 
+
+        return productMapper.toDto(productRepo.save(toSave));
     }
 
+    @Transactional
     @Override
-    public void deleteProduct(int id) {
-        Product product = productRepo.findById(id).orElseThrow(
-            () -> new ValidationException("Product not found with id: " + id));
+    public void deleteProduct(long id) {
+        Product product = productRepo.findById(id)
+                .orElseThrow(() -> new ValidationException("Product not found with id: " + id));
         productRepo.deleteById(id);
     }
 
+    @Transactional
     @Override
     public ProductDTO updateProduct(int id, ProductDTO updatedProduct) throws ValidationException {
-        Product existingProduct = productRepo.findById(id)
-        .orElseThrow(() -> new ValidationException("Product not found with id: " + id));
+        Product existingProduct = productRepo.findById((long)id)
+                .orElseThrow(() -> new ValidationException("Product not found with id: " + id));
 
-        // Validation
-        if (updatedProduct.getName() == null || updatedProduct.getName().trim().isEmpty()) 
+        if (updatedProduct.getName() == null || updatedProduct.getName().trim().isEmpty())
             throw new ValidationException("Product name is required.");
 
         if (updatedProduct.getPrice() == null || updatedProduct.getPrice() < 0)
@@ -152,7 +182,6 @@ public class ProductServiceImpl implements ProductService{
         if (updatedProduct.getCategoryName() == null)
             throw new ValidationException("Product category is required.");
 
-        // Update 
         existingProduct.setName(updatedProduct.getName());
         existingProduct.setPrice(updatedProduct.getPrice());
         existingProduct.setStockQuantity(updatedProduct.getStockQuantity());
@@ -161,42 +190,25 @@ public class ProductServiceImpl implements ProductService{
         return productMapper.toDto(saved);
     }
 
+    @Transactional
     @Override
-    public boolean updateStockQuantity(int productId, int newQuantity) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateStockQuantity'");
+    public boolean updateStockQuantity(int productId, int newQuantity) {
+        int updatedRows = productRepo.updateStockQuantity(productId, newQuantity);
+        if (updatedRows == 0) {
+            throw new ResourceNotFoundException("Product with id " + productId + " not found");
+        }
+        return true;
     }
 
-    @Override
-    public List<ProductDTO> getProductsByCategoryAndPriceRange(int categoryId, double minPrice, double maxPrice,
-            int page, int pageSize) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByCategoryAndPriceRange'");
-    }
-
-    @Override
-    public List<ProductDTO> getProductsByPriceRange(double minPrice, double maxPrice, int page, int pageSize) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByPriceRange'");
-    }
-
-    @Override
-    public int getTotalProductsByPrice(double minPrice, double maxPrice, Integer categoryId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTotalProductsByPrice'");
-    }
     private String uploadProductImage(MultipartFile image) {
         try {
             File uploadPath = new File(UPLOAD_DIRECTORY);
             if (!uploadPath.exists()) uploadPath.mkdirs();
-            
-            StringBuilder fileNames = new StringBuilder();
+
             Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, image.getOriginalFilename());
-            fileNames.append(image.getOriginalFilename());
-            Files.write(fileNameAndPath, image.getBytes());   //write
+            Files.write(fileNameAndPath, image.getBytes());   // write
 
-            return fileNames.toString();
-
+            return image.getOriginalFilename();
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload image", e);
         }

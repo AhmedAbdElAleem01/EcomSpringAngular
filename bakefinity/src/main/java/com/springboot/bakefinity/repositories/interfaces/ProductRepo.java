@@ -1,35 +1,39 @@
 package com.springboot.bakefinity.repositories.interfaces;
 
-import com.springboot.bakefinity.model.dtos.ProductDTO;
 import com.springboot.bakefinity.model.entities.Product;
+import lombok.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+public interface ProductRepo extends JpaRepository<Product, Long> {
 
-public interface ProductRepo extends JpaRepository<Product, Integer> {
-    @Query("SELECT p FROM Product p WHERE p.deleted = false")
-    List<Product> getAllProducts();
+    @NonNull
+    List<Product> findAll();
 
-    // List<ProductDTO> getByCategory(int categoryId) throws Exception;
+    List<Product> findByCategoryId(int categoryId);
 
-    // List<ProductDTO> getTopInStock(int limit) throws Exception;
+    List<Product> findAllByOrderByStockQuantityDesc(Pageable pageable);
 
-    // List<ProductDTO> searchByName(String name) throws Exception;
+    List<Product> findByNameContainingIgnoreCase(String name);
 
-    // List<ProductDTO> getProductsByPage(int offset, int limit) throws Exception;
-    // List<ProductDTO> getProductsByCategoryPage(int categoryId, int offset, int limit) throws Exception;
 
-    // int getTotalCount() throws Exception;
-    // int getTotalCountByCategory(int categoryId) throws Exception;
+    @NonNull
+    Page<Product> findAll(@NonNull Pageable pageable);
 
-    // boolean updateStockQuantity(int productId, int newQuantity) throws SQLException;
-    // ProductDTO getById(int productId) throws SQLException;
+    Page<Product> findByCategoryId(int categoryId, Pageable pageable);
 
-    
-    // int getTotalProductsByPrice(Double minPrice, Double maxPrice, Integer categoryId) throws Exception;
-    // List<ProductDTO> getProductsByPriceRange(int offset, int limit, double minPrice, double maxPrice)throws Exception;
-    // List<ProductDTO> getProductsByCategoryAndPriceRange(int categoryId, double minPrice, double maxPrice, int offset, int limit)throws Exception;
+    int countByCategoryId(int categoryId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Product p SET p.stockQuantity = :newQuantity WHERE p.id = :productId")
+    int updateStockQuantity(@Param("productId") int productId, @Param("newQuantity") int newQuantity);
+
 }
