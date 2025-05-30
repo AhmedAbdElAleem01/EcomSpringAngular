@@ -86,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional(readOnly = true)
     @Override
-    public ProductDTO getProductById(Long id) {
+    public ProductDTO getProductById(int id) {
         return productMapper.toDto(
                 productRepo.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("no such product"))
@@ -158,7 +158,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void deleteProduct(long id) {
+    public void deleteProduct(int id) {
         Product product = productRepo.findById(id)
                 .orElseThrow(() -> new ValidationException("Product not found with id: " + id));
         productRepo.deleteById(id);
@@ -167,7 +167,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public ProductDTO updateProduct(int id, ProductDTO updatedProduct) throws ValidationException {
-        Product existingProduct = productRepo.findById((long)id)
+        Product existingProduct = productRepo.findById(id)
                 .orElseThrow(() -> new ValidationException("Product not found with id: " + id));
 
         if (updatedProduct.getName() == null || updatedProduct.getName().trim().isEmpty())
