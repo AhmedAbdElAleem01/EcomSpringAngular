@@ -16,7 +16,7 @@ public interface ProductService {
     List<ProductDTO> getClassicProducts(int limit) ;
     List<ProductDTO> searchProductsByName(String name);
 
-    ProductDTO getProductById(Long id);
+    ProductDTO getProductById(int id);
 
     Page<ProductDTO> getProductsByCategoryPaged(int categoryId, int page, int pageSize);
     int getTotalProductsByCategory(int categoryId);
@@ -25,7 +25,7 @@ public interface ProductService {
     long getTotalProductCount();
 
     ProductDTO addProduct(ProductDTO product, MultipartFile image) throws ValidationException;
-    void deleteProduct(long id);
+    void deleteProduct(int id);
     ProductDTO updateProduct(int id, ProductDTO updatedProduct) throws ValidationException;
 
     boolean updateStockQuantity(int productId, int newQuantity) throws SQLException;
