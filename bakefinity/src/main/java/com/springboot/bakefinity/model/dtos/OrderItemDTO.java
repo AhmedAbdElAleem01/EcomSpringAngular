@@ -9,9 +9,19 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OrderItemDTO {
     private Integer userId;
+    private String userName;
     private Integer orderId;
     private Integer productId;
     private String productName;
     private Double price;
     private int quantity;
+
+    public OrderItemDTO() {}
+
+    public OrderItemDTO(Integer userId, Integer productId, int quantity) {
+        this.userId = userId;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
 }

@@ -36,6 +36,16 @@ public class OrderServiceImpl implements OrderService {
         Order savedOrder = orderRepo.save(order); // save => can accept an Entity object only and can return S extends Entity or Entity itself
         return savedOrder != null ? orderMapper.toDTO(savedOrder).getId() : -1;
     }
+  
+   @Override
+    public List<OrderDTO> getAllOrders() {
+        List<Order> orders = orderRepo.findAll();
+        List<OrderDTO> orderDTOs = new ArrayList<>();
+        for (Order order : orders) {
+            orderDTOs.add(orderMapper.toDTO(order));
+        }
+        return orderDTOs;
+    }
 
     @Override
     public int updateStatus(int orderId, OrderStatus orderStatus){

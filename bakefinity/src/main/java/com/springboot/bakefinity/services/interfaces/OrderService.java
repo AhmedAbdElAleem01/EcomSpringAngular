@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface OrderService {
+    List<OrderDTO> getAllOrders();
     int create(OrderDTO order);
     int updateStatus(int orderId, OrderStatus orderStatus);
     List<OrderDTO> getAllOrdersByCustomerId(int userId);

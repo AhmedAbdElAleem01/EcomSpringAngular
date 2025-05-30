@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Table(name = "product")
@@ -14,9 +15,9 @@ import java.util.Set;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE product SET deleted = true WHERE id=?")  //override the delete command
 @ToString(exclude = {"orderItems", "cartItems"})
 public class Product {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
@@ -54,4 +55,7 @@ public class Product {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
     private Set<CartItem> cartItems = new HashSet<>();
+
+    // flag for soft delete
+    private boolean deleted = Boolean.FALSE;
 }

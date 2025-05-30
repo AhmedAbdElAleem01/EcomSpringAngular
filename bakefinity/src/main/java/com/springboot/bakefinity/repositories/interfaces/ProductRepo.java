@@ -14,6 +14,7 @@ import java.util.List;
 
 public interface ProductRepo extends JpaRepository<Product, Integer> {
     @NonNull
+    @Query("SELECT p FROM Product p WHERE p.deleted = false")
     List<Product> findAll();
 
     List<Product> findByCategoryId(int categoryId);
@@ -34,4 +35,5 @@ public interface ProductRepo extends JpaRepository<Product, Integer> {
     @Transactional
     @Query("UPDATE Product p SET p.stockQuantity = :newQuantity WHERE p.id = :productId")
     int updateStockQuantity(@Param("productId") int productId, @Param("newQuantity") int newQuantity);
+
 }
