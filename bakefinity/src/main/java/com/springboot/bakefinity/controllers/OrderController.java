@@ -59,7 +59,7 @@ public class OrderController { // checkout
         // update user's credit limit
         int affectedRows = profileService.updateCreditLimit(user, user.getCreditLimit() - totalCost);
         if(affectedRows > 0) {
-            session.setAttribute("user", user); // updated user
+            session.setAttribute("user", orderService.getCurrentUser(user.getId())); // updated user
         }
         else{
             orderService.updateStatus(newOrderId, OrderStatus.FAILED);
