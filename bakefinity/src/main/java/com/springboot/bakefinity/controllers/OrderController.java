@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/checkout")
 public class OrderController { // checkout
     @Autowired
     private OrderService orderService;
@@ -39,7 +39,7 @@ public class OrderController { // checkout
     private CartPrice cartPrice;
 
 
-    @PostMapping("/checkout")
+    @PostMapping
     public ResponseEntity<String> checkout(@SessionAttribute(name = "user") UserDTO user, @SessionAttribute(name = "cart") Map<Integer, CartDTO> cart, HttpSession session) throws SQLException {
         // check stock quantity then create order
         for(CartDTO cartItem : cart.values()){

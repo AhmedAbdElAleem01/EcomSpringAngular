@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> getAllProducts() {
         return productRepo.findAll()
                 .stream()
-                .map(productMapper::toDTO)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -59,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
         }
         return productRepo.findByCategoryId(categoryId)
                 .stream()
-                .map(productMapper::toDTO)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -71,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
         }
         return productRepo.findAllByOrderByStockQuantityDesc(PageRequest.of(0, limit))
                 .stream()
-                .map(productMapper::toDTO)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -80,14 +80,14 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> searchProductsByName(String name) {
         return productRepo.findByNameContainingIgnoreCase(name)
                 .stream()
-                .map(productMapper::toDTO)
+                .map(productMapper::toDto)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     @Override
     public ProductDTO getProductById(int id) {
-        return productMapper.toDTO(
+        return productMapper.toDto(
                 productRepo.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("no such product"))
         );
@@ -103,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
 
         Pageable pageable = PageRequest.of(page, pageSize);
         return productRepo.findByCategoryId(categoryId, pageable)
-                .map(productMapper::toDTO);
+                .map(productMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -120,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductDTO> getProductsByPage(int page, int pageSize, Sort sort) {
         return productRepo.findAll(PageRequest.of(page, pageSize, sort))
-                .map(productMapper::toDTO);
+                .map(productMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -153,7 +153,7 @@ public class ProductServiceImpl implements ProductService {
         Product toSave = productMapper.toEntity(product);
         toSave.setCategory(category);
 
-        return productMapper.toDTO(productRepo.save(toSave));
+        return productMapper.toDto(productRepo.save(toSave));
     }
 
     @Transactional
@@ -187,7 +187,7 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setStockQuantity(updatedProduct.getStockQuantity());
 
         Product saved = productRepo.save(existingProduct);
-        return productMapper.toDTO(saved);
+        return productMapper.toDto(saved);
     }
 
     @Transactional

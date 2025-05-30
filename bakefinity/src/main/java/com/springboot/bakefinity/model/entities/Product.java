@@ -21,7 +21,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private Long id;
+    private int id;
 
     @NonNull
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
