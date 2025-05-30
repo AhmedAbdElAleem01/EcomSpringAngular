@@ -8,6 +8,7 @@ public class CartDTO {
     private Integer productId;
     private int quantity;
 
+    public CartDTO() {}
     public CartDTO(CartItemId cartItemId, int quantity) {
         this.userId = cartItemId.getUserId();
         this.productId = cartItemId.getProductId();
@@ -41,7 +42,17 @@ public class CartDTO {
         this.productId = productId;
     }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        boolean result = false;
+        if (obj instanceof CartDTO) {
+            CartDTO cartDTO = (CartDTO) obj;
+            if (this.userId.equals(cartDTO.getUserId()) && this.productId.equals(cartDTO.getProductId())&& this.quantity == cartDTO.getQuantity()) {
+                result = true;
+            }
+        }
+        return result;
+    }
 
     @Override
     public String toString() {
