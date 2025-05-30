@@ -33,4 +33,13 @@ public class CartItemId implements java.io.Serializable {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CartItemId) {
+            CartItemId cartItemId = (CartItemId) obj;
+            return this.productId.equals(cartItemId.getProductId()) && this.userId.equals(cartItemId.getUserId());
+        }
+        return false;
+    }
 }
