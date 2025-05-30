@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface ProductRepo extends JpaRepository<Product, Integer> {
-
     @NonNull
     @Query("SELECT p FROM Product p WHERE p.deleted = false")
     List<Product> findAll();

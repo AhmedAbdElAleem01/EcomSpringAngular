@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @ToString(exclude = {"description", "ingredients"})
 public class ProductDTO {
-    private int id;
+    private Long id;
     private String name;
     private int categoryId;
     private String categoryName;

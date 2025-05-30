@@ -1,9 +1,14 @@
 package com.springboot.bakefinity.model.dtos;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.Date;
 
+@Setter
+@Getter
 public class UserDTO {
-    private int id;
+    private Integer id;
     private String name;
     private String username;
     private String phoneNumber;
@@ -27,91 +32,6 @@ public class UserDTO {
         this.creditLimit = creditLimit;
         this.birthDate = birthDate;
         this.job = job;
-        this.createdAt = createdAt;
-    }
-
-    public void setId(int id){
-        this.id = id;
-    }
-    public int getId(){
-        return this.id;
-    }
-    public String getRole() {
-        return this.role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public double getCreditLimit() {
-        return creditLimit;
-    }
-
-    public void setCreditLimit(double creditLimit) {
-        this.creditLimit = creditLimit;
-    }
-
-    public Date getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public String getJob() {
-        return job;
-    }
-
-    public void setJob(String job) {
-        this.job = job;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

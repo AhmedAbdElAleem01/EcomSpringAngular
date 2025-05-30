@@ -1,6 +1,5 @@
 package com.springboot.bakefinity.model.entities;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 

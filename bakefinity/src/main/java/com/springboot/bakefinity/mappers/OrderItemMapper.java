@@ -3,10 +3,8 @@ package com.springboot.bakefinity.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-
 import com.springboot.bakefinity.model.dtos.OrderItemDTO;
 import com.springboot.bakefinity.model.entities.OrderItem;
-import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface OrderItemMapper {
