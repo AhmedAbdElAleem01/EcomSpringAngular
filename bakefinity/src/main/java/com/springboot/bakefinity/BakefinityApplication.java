@@ -18,11 +18,4 @@ public class BakefinityApplication {
 		SpringApplication.run(BakefinityApplication.class, args);
 	}
 
-
-	@Bean
-	CommandLineRunner run(ProductService productService){
-		return args -> {
-			System.out.println(productService.getProductsByCategory(11));
-		};
-	}
 }
