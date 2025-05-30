@@ -1,140 +1,57 @@
 package com.springboot.bakefinity.model.entities;
 
-
 import jakarta.persistence.*;
+import lombok.*;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "product")
-public class Product implements Serializable {
-    private Integer id;
-    private Category category;
-    private String name;
-    private String description;
-    private Double price;
-    private String imageUrl;
-    private Integer stockQuantity;
-    private String ingredients;
-    private Set<OrderItem> orderItems = new HashSet<OrderItem>(0);
-    private Set<CartItem> cartItems = new HashSet<CartItem>(0);
-
-    public Product() {
-    }
-
-    public Product(Category category, String name, Double price, String imageUrl, Integer stockQuantity) {
-        this.category = category;
-        this.name = name;
-        this.price = price;
-        this.imageUrl = imageUrl;
-        this.stockQuantity = stockQuantity;
-    }
-
-    public Product(Integer id, Category category, String name, String description, Double price, String imageUrl, Integer stockQuantity, String ingredients, Set<OrderItem> orderItems, Set<CartItem> cartItems) {
-        this.id = id;
-        this.category = category;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.imageUrl = imageUrl;
-        this.stockQuantity = stockQuantity;
-        this.ingredients = ingredients;
-        this.orderItems = orderItems;
-        this.cartItems = cartItems;
-    }
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Builder
+@ToString(exclude = {"orderItems", "cartItems"})
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    public Integer getId() {
-        return this.id;
-    }
+    @Column(unique = true, nullable = false)
+    private Long id;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NonNull
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "categoryId", nullable = false)
-    public Category getCategory() {
-        return this.category;
-    }
+    private Category category;
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
+    @NonNull
+    @Column(nullable = false, length = 255)
+    private String name;
 
-    @Column(name = "name", nullable = false, length = 255)
-    public String getName() {
-        return this.name;
-    }
+    @Column(length = 255)
+    private String description;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    @NonNull
+    @Column(nullable = false, precision = 10)
+    private Double price;
 
-    @Column(name = "description", length = 255)
-    public String getDescription() {
-        return this.description;
-    }
+    @NonNull
+    @Column(nullable = false, length = 255)
+    private String imageUrl;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    @NonNull
+    @Column(nullable = false)
+    private Integer stockQuantity;
 
-    @Column(name = "price", nullable = false, precision = 10)
-    public Double getPrice() {
-        return this.price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    @Column(name = "imageUrl", nullable = false, length = 255)
-    public String getImageUrl() {
-        return this.imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    @Column(name = "stockQuantity", nullable = false)
-    public Integer getStockQuantity() {
-        return this.stockQuantity;
-    }
-
-    public void setStockQuantity(Integer stockQuantity) {
-        this.stockQuantity = stockQuantity;
-    }
-
-    @Column(name = "ingredients", length = 255)
-    public String getIngredients() {
-        return this.ingredients;
-    }
-
-    public void setIngredients(String ingredients) {
-        this.ingredients = ingredients;
-    }
+    @Column(length = 255)
+    private String ingredients;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
-    public Set<OrderItem> getOrderItems() {
-        return this.orderItems;
-    }
-
-    public void setOrderItems(Set<OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
+    private Set<OrderItem> orderItems = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
-    public Set<CartItem> getCartItems() {
-        return this.cartItems;
-    }
-
-    public void setCartItems(Set<CartItem> cartItems) {
-        this.cartItems = cartItems;
-    }
+    private Set<CartItem> cartItems = new HashSet<>();
 }

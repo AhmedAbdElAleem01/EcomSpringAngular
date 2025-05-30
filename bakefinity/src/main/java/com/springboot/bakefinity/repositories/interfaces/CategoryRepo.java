@@ -1,15 +1,17 @@
 package com.springboot.bakefinity.repositories.interfaces;
 
-import com.springboot.bakefinity.model.dtos.CategoryDTO;
 import com.springboot.bakefinity.model.entities.Category;
+import lombok.NonNull;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
-public interface CategoryRepo{
-    Category get(int id) throws Exception;
-    List<Category> getAll() throws Exception;
-    List<Category> searchByName(String name) throws Exception;
-    CategoryDTO getCategoryByName(String categoryName) throws SQLException;
+@Repository
+public interface CategoryRepo extends JpaRepository<Category, Integer> {
 
+    List<Category> findByNameContainingIgnoreCase(String name);
+
+    Optional<Category> findByName(@NonNull String name);
 }
