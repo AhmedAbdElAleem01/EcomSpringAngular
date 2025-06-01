@@ -4,11 +4,11 @@ import com.springboot.bakefinity.model.dtos.*;
 import com.springboot.bakefinity.model.entities.*;
 import com.springboot.bakefinity.model.enums.OrderStatus;
 import com.springboot.bakefinity.model.enums.PaymentMethod;
-import com.springboot.bakefinity.repositories.interfaces.UserRepo;
 import com.springboot.bakefinity.services.interfaces.*;
 import com.springboot.bakefinity.utils.CartPrice;
 import com.springboot.bakefinity.utils.EmailUtil;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/checkout")
-public class OrderController { // checkout
+public class CheckoutController {
     @Autowired
     private OrderService orderService;
 
@@ -40,13 +40,14 @@ public class OrderController { // checkout
 
 
     @PostMapping
-    public ResponseEntity<String> checkout(@SessionAttribute(name = "user") UserDTO user, @SessionAttribute(name = "cart") Map<Integer, CartDTO> cart, HttpSession session) throws SQLException {
+    public ResponseEntity<String> checkout(@RequestBody @Valid BillingDetailsDTO body, @SessionAttribute(name = "user") UserDTO user, @SessionAttribute(name = "cart") Map<Integer, CartDTO> cart, HttpSession session) throws SQLException {
+        // check billing details
+
         // check stock quantity then create order
         for(CartDTO cartItem : cart.values()){
             int productId = cartItem.getProductId();
             if(productService.getProductById(productId).getStockQuantity() < cartItem.getQuantity()){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Error: Sorry, the requested quantity exceeds the available stock for some products. Please adjust your order accordingly.");
+                return ResponseEntity.badRequest().body("Error: Sorry, the requested quantity exceeds the available stock for some products. Please adjust your order accordingly.");
                 // return "redirect:/cart";
             }
         }
@@ -109,12 +110,12 @@ public class OrderController { // checkout
 
     // right side
     @GetMapping("/cart/details")
-    public ResponseEntity<List<CartItemDetails>> getUserCartItems(@SessionAttribute("cart") Map<Integer, CartDTO> cart){
-        List<CartItemDetails> cartItemDetailsList = new ArrayList<>();
+    public ResponseEntity<List<CartItemDetailsDTO>> getUserCartItems(@SessionAttribute("cart") Map<Integer, CartDTO> cart){
+        List<CartItemDetailsDTO> cartItemDetailsList = new ArrayList<>();
         for(CartDTO cartItem : cart.values()){
             ProductDTO product = productService.getProductById(cartItem.getProductId());
             Double totalPerProduct = cartItem.getQuantity() * product.getPrice();
-            CartItemDetails cartItemDetails = new CartItemDetails(cartItem.getQuantity(), product.getName(), product.getDescription(), totalPerProduct);
+            CartItemDetailsDTO cartItemDetails = new CartItemDetailsDTO(cartItem.getQuantity(), product.getName(), product.getDescription(), totalPerProduct);
             cartItemDetailsList.add(cartItemDetails);
         }
         return ResponseEntity.ok(cartItemDetailsList);
@@ -127,10 +128,10 @@ public class OrderController { // checkout
 
 
     // left side
-    @GetMapping("/delivery/info")
-    public ResponseEntity<DeliveryDetails> getUserInfo(@SessionAttribute("user") UserDTO user){
+    @GetMapping("/billing/info")
+    public ResponseEntity<BillingDetailsDTO> getUserInfo(@SessionAttribute("user") UserDTO user){
         Optional<AddressDTO> address = addressService.getAddressByUserId(user.getId());
-        DeliveryDetails details = new DeliveryDetails(user.getName(), user.getEmail(), user.getPhoneNumber(), address.get().getCountry(), address.get().getCity(), address.get().getStreet(), address.get().getBuildingNo());
+        BillingDetailsDTO details = new BillingDetailsDTO(user.getName(), user.getEmail(), user.getPhoneNumber(), address.get().getCountry(), address.get().getCity(), address.get().getStreet(), address.get().getBuildingNo());
         return ResponseEntity.ok(details);
     }
 
