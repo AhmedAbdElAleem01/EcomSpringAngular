@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class CartItemDetails {
+public class CartItemDetailsDTO implements Serializable {
     private Integer quantity;
     private String name;
     private String description;

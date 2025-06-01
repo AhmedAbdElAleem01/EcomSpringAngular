@@ -3,8 +3,10 @@ package com.springboot.bakefinity.model.entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
+
 @Embeddable
-public class CartItemId implements java.io.Serializable {
+public class CartItemId implements Serializable {
     private Integer productId;
     private Integer userId;
 
