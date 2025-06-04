@@ -4,7 +4,6 @@ import com.springboot.bakefinity.model.dtos.*;
 import com.springboot.bakefinity.model.entities.*;
 import com.springboot.bakefinity.model.enums.OrderStatus;
 import com.springboot.bakefinity.model.enums.PaymentMethod;
-import com.springboot.bakefinity.repositories.interfaces.UserRepo;
 import com.springboot.bakefinity.services.interfaces.*;
 import com.springboot.bakefinity.utils.CartPrice;
 import com.springboot.bakefinity.utils.EmailUtil;
@@ -19,7 +18,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/checkout")
-public class OrderController { // checkout
+public class CheckoutController { // checkout
     @Autowired
     private OrderService orderService;
 
