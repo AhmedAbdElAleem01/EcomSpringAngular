@@ -8,6 +8,7 @@ import com.springboot.bakefinity.services.interfaces.*;
 import com.springboot.bakefinity.utils.CartPrice;
 import com.springboot.bakefinity.utils.EmailUtil;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/checkout")
-public class CheckoutController { // checkout
+public class CheckoutController {
     @Autowired
     private OrderService orderService;
 
@@ -39,13 +40,14 @@ public class CheckoutController { // checkout
 
 
     @PostMapping
-    public ResponseEntity<String> checkout(@SessionAttribute(name = "user") UserDTO user, @SessionAttribute(name = "cart") Map<Integer, CartDTO> cart, HttpSession session) throws SQLException {
+    public ResponseEntity<String> checkout(@RequestBody @Valid BillingDetailsDTO body, @SessionAttribute(name = "user") UserDTO user, @SessionAttribute(name = "cart") Map<Integer, CartDTO> cart, HttpSession session) throws SQLException {
+        // check billing details
+
         // check stock quantity then create order
         for(CartDTO cartItem : cart.values()){
             int productId = cartItem.getProductId();
             if(productService.getProductById(productId).getStockQuantity() < cartItem.getQuantity()){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Error: Sorry, the requested quantity exceeds the available stock for some products. Please adjust your order accordingly.");
+                return ResponseEntity.badRequest().body("Error: Sorry, the requested quantity exceeds the available stock for some products. Please adjust your order accordingly.");
                 // return "redirect:/cart";
             }
         }
@@ -53,17 +55,20 @@ public class CheckoutController { // checkout
         OrderDTO order = new OrderDTO(user.getId(), totalCost, PaymentMethod.CREDIT_CARD, LocalDateTime.now(), OrderStatus.SHIPPED);
         int newOrderId = orderService.create(order);
         if(newOrderId <= 0) return ResponseEntity.internalServerError().body("Error in creating order!!!");
+        System.out.println("step1 is done....");
 
         // update user's credit limit
         UserDTO updatedUser = profileService.updateCreditLimit(user.getId(), user.getCreditLimit() - totalCost);
         if(updatedUser !=null) {
-            System.out.printf("updated user: " + updatedUser.toString());
+            System.out.printf("updated user: " + updatedUser);
             session.setAttribute("user", updatedUser);
         }
         else{
             orderService.updateStatus(newOrderId, OrderStatus.FAILED);
             return ResponseEntity.internalServerError().body("Error in updating user credit limit!!!");
         }
+        System.out.println("step2 is done....");
+
         // update stock quantity
         for(CartDTO cartItem : cart.values()){
             int productId = cartItem.getProductId();
@@ -74,6 +79,8 @@ public class CheckoutController { // checkout
                 return ResponseEntity.internalServerError().body("Error in updating stock quantity!!!");
             }
         }
+        System.out.println("step3 is done....");
+
         // create row in orderItems table for each cart item
         for(CartDTO cartItem : cart.values()){
             OrderItem orderItem = orderItemService.create(new OrderItem(new OrderItemId(cartItem.getProductId(), newOrderId), cartItem.getQuantity()));
@@ -82,6 +89,8 @@ public class CheckoutController { // checkout
                 return ResponseEntity.internalServerError().body("Error in creating orderItem!!!");
             }
         }
+        System.out.println("step4 is done....");
+
         // send email
         StringBuilder orderDetails = new StringBuilder();
         for(CartDTO cartItem : cart.values()){
@@ -102,12 +111,12 @@ public class CheckoutController { // checkout
 
     // right side
     @GetMapping("/cart/details")
-    public ResponseEntity<List<CartItemDetails>> getUserCartItems(@SessionAttribute("cart") Map<Integer, CartDTO> cart){
-        List<CartItemDetails> cartItemDetailsList = new ArrayList<>();
+    public ResponseEntity<List<CartItemDetailsDTO>> getUserCartItems(@SessionAttribute("cart") Map<Integer, CartDTO> cart){
+        List<CartItemDetailsDTO> cartItemDetailsList = new ArrayList<>();
         for(CartDTO cartItem : cart.values()){
             ProductDTO product = productService.getProductById(cartItem.getProductId());
             Double totalPerProduct = cartItem.getQuantity() * product.getPrice();
-            CartItemDetails cartItemDetails = new CartItemDetails(cartItem.getQuantity(), product.getName(), product.getDescription(), totalPerProduct);
+            CartItemDetailsDTO cartItemDetails = new CartItemDetailsDTO(cartItem.getQuantity(), product.getName(), product.getDescription(), totalPerProduct);
             cartItemDetailsList.add(cartItemDetails);
         }
         return ResponseEntity.ok(cartItemDetailsList);
@@ -120,10 +129,10 @@ public class CheckoutController { // checkout
 
 
     // left side
-    @GetMapping("/delivery/info")
-    public ResponseEntity<DeliveryDetails> getUserInfo(@SessionAttribute("user") UserDTO user){
+    @GetMapping("/billing/info")
+    public ResponseEntity<BillingDetailsDTO> getUserInfo(@SessionAttribute("user") UserDTO user){
         Optional<AddressDTO> address = addressService.getAddressByUserId(user.getId());
-        DeliveryDetails details = new DeliveryDetails(user.getName(), user.getEmail(), user.getPhoneNumber(), address.get().getCountry(), address.get().getCity(), address.get().getStreet(), address.get().getBuildingNo());
+        BillingDetailsDTO details = new BillingDetailsDTO(user.getName(), user.getEmail(), user.getPhoneNumber(), address.get().getCountry(), address.get().getCity(), address.get().getStreet(), address.get().getBuildingNo());
         return ResponseEntity.ok(details);
     }
 
@@ -132,12 +141,12 @@ public class CheckoutController { // checkout
     @PostMapping("/test/session")
     public ResponseEntity<String> simulateSession(HttpSession session) {
         // put a fake user on session
-        System.out.println("current user => " + orderService.getCurrentUser(20));
-        session.setAttribute("user", orderService.getCurrentUser(20)); // any user from DB
+        System.out.println("current user => " + orderService.getCurrentUser(58));
+        session.setAttribute("user", orderService.getCurrentUser(58)); // any user from DB
 
         // put a fake cart on session
         Map<Integer, CartDTO> cart = new HashMap<>();
-        cart.put(5, new CartDTO(new CartItemId(5, 20), 2));
+        cart.put(5, new CartDTO(new CartItemId(5, 58), 2));
         session.setAttribute("cart", cart);
 
         return ResponseEntity.ok("session is created");
