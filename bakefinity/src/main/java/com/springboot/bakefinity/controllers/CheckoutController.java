@@ -58,9 +58,10 @@ public class CheckoutController {
         System.out.println("step1 is done....");
 
         // update user's credit limit
-        int affectedRows = profileService.updateCreditLimit(user, user.getCreditLimit() - totalCost);
-        if(affectedRows > 0) {
-            session.setAttribute("user", orderService.getCurrentUser(user.getId())); // updated user
+        UserDTO updatedUser = profileService.updateCreditLimit(user.getId(), user.getCreditLimit() - totalCost);
+        if(updatedUser !=null) {
+            System.out.printf("updated user: " + updatedUser);
+            session.setAttribute("user", updatedUser);
         }
         else{
             orderService.updateStatus(newOrderId, OrderStatus.FAILED);
