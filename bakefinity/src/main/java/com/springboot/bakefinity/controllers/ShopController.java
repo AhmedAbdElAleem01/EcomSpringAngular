@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Sort;
 
 import static com.springboot.bakefinity.utils.ResponseEntityUtil.*;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 @RestController
 public class ShopController {
@@ -50,6 +52,8 @@ public class ShopController {
             @RequestParam(defaultValue = "id,asc") String sort
     ) {
 
+        System.out.println("cat :  " +catID);
+
         String[] sortParams = sort.split(",");
         String sortField = sortParams[0].trim();
 
@@ -58,6 +62,9 @@ public class ShopController {
 
         System.out.println(catID);
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+        System.out.println(productService.findAllFiltered(catID, minPrice, maxPrice, pageable).getContent());
+
         return productService.findAllFiltered(catID, minPrice, maxPrice, pageable);
     }
 
