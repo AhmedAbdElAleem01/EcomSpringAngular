@@ -18,4 +18,12 @@ public class BakefinityApplication {
 		SpringApplication.run(BakefinityApplication.class, args);
 	}
 
+
+	@Bean
+	CommandLineRunner applicationInitializer(ProductService productService) {
+		return (args) -> {
+			System.out.println(productService.getAllProducts());
+		};
+	}
+
 }

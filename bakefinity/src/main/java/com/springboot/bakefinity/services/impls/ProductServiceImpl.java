@@ -9,11 +9,13 @@ import com.springboot.bakefinity.model.entities.Product;
 import com.springboot.bakefinity.repositories.interfaces.CategoryRepo;
 import com.springboot.bakefinity.repositories.interfaces.ProductRepo;
 import com.springboot.bakefinity.services.interfaces.ProductService;
+import com.springboot.bakefinity.utils.ProductSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -127,6 +129,24 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public long getTotalProductCount() {
         return productRepo.count();
+    }
+
+
+    public Page<ProductDTO> findAllFiltered(Integer categoryId, Double minPrice,
+            Double maxPrice, Pageable pageable) {
+
+        Specification<Product> spec = Specification.where(null);
+
+        if (categoryId != null) {
+            spec = spec.and(ProductSpecs.categoryEquals(categoryId));
+        }
+
+        if (minPrice != null || maxPrice != null) {
+            spec = spec.and(ProductSpecs.priceBetween(minPrice, maxPrice));
+        }
+
+        return productRepo.findAll(spec, pageable)
+                .map(productMapper::toDto);
     }
 
     @Transactional
