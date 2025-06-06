@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int updateStatus(int orderId, OrderStatus orderStatus){
+    public int updateStatus(Integer orderId, OrderStatus orderStatus){
         return orderRepo.updateStatus(orderId, orderStatus.name());
     }
 
@@ -62,10 +62,8 @@ public class OrderServiceImpl implements OrderService {
         return orderDTOs;
     }
 
-
-    /* just for testing */
     @Override
-    public UserDTO getCurrentUser(int id) {
-        return userMapper.toDto(userRepo.findById(id).orElse(null));
+    public UserDTO getUserById(Integer userId){
+        return userMapper.toDto(userRepo.findById(userId).orElse(null));
     }
 }

@@ -10,9 +10,7 @@ import java.util.List;
 public interface OrderService {
     List<OrderDTO> getAllOrders();
     int create(OrderDTO order);
-    int updateStatus(int orderId, OrderStatus orderStatus);
+    int updateStatus(Integer orderId, OrderStatus orderStatus);
     List<OrderDTO> getAllOrdersByCustomerId(int userId);
-
-    /* just for testing */
-    UserDTO getCurrentUser(int id);
+    UserDTO getUserById(Integer userId);
 }

@@ -2,12 +2,14 @@ package com.springboot.bakefinity.model.dtos;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString(exclude = {"description", "ingredients"})
-public class ProductDTO {
+public class ProductDTO implements Serializable {
     private int id;
     private String name;
     private int categoryId;
