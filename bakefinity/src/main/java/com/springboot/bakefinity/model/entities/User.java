@@ -185,6 +185,7 @@ public class User implements Serializable {
         this.cartItems = cartItems;
     }
 
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "userinterests", joinColumns = {
             @JoinColumn(name = "userId", nullable = false) }, inverseJoinColumns = {

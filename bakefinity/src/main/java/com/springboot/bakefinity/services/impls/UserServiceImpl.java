@@ -8,9 +8,7 @@ import com.springboot.bakefinity.model.dtos.LoginRequestDto;
 import com.springboot.bakefinity.model.dtos.UserDTO;
 import com.springboot.bakefinity.model.dtos.UserInterestsDTO;
 import com.springboot.bakefinity.model.dtos.UserRegistrationRequestDTO;
-import com.springboot.bakefinity.model.entities.Address;
-import com.springboot.bakefinity.model.entities.Category;
-import com.springboot.bakefinity.model.entities.User;
+import com.springboot.bakefinity.model.entities.*;
 import com.springboot.bakefinity.repositories.interfaces.AddressRepo;
 import com.springboot.bakefinity.repositories.interfaces.CategoryRepo;
 import com.springboot.bakefinity.repositories.interfaces.UserInterestsRepo;
@@ -38,10 +36,12 @@ public class UserServiceImpl implements UserLoginService , UserRegisterService {
     @Autowired
     private CategoryRepo categoryRepository;
     @Autowired
-    private UserInterestsService userInterestsService;
-    @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserInterestsRepo userInterestsRepo;
 
+    @Autowired
+    private UserInterestsService userInterestsService;
     private BCryptPasswordEncoder passwordEncoder;
 
     /****************************** Registration ***************************************/
@@ -68,23 +68,31 @@ public class UserServiceImpl implements UserLoginService , UserRegisterService {
                     request.getCountry());
 
             addressRepository.save(address);
+
             if (request.getInterests() != null) {
                 for (String interest : request.getInterests()) {
 
                         System.out.println(interest);
 
-                    Optional<Category> catOpt = categoryRepository.findByName(interest);
-                    if (catOpt.isEmpty()) {
-                        throw new ResourceNotFoundException("Category not found: " + interest);
-                    }
 
-                    Category category = catOpt.get();
+                    Category category = categoryRepository.findByName(interest)
+                            .orElseThrow(() -> new RuntimeException("Category not found with Name: " + interest));
+
+                    System.out.println("************************");
+                    System.out.println(category);
+                    System.out.println("************************");
+                    System.out.println(user);
+                    System.out.println("************************");
+
                     System.out.println(category.getName());
-                    userInterestsService.createUserInterests(
-                            new UserInterestsDTO(user.getId(), category.getId())
-                    );
+                    System.out.println("************************");
+                   UserInterest userInterest=new UserInterest(new InterestsId(user.getId(),category.getId()));
+                    System.out.println(userInterest.getId());
+                    System.out.println("************************");
+                    userInterestsService.createUserInterests(userInterest);
                 }
             }
+
 /************************************************************************ CART **************************************/
             // Initialize cart
 
