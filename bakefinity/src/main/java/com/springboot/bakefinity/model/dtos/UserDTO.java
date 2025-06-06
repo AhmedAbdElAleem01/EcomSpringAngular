@@ -1,12 +1,15 @@
 package com.springboot.bakefinity.model.dtos;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Setter
 @Getter
+@AllArgsConstructor
 public class UserDTO {
     private Integer id;
     private String name;
@@ -19,7 +22,7 @@ public class UserDTO {
     private String job;
     private LocalDateTime createdAt;
     String role;
-
+    private List<String> authorities;
     public UserDTO() {
     }
 
