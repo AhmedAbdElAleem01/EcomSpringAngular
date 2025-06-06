@@ -1,5 +1,8 @@
 package com.springboot.bakefinity.model.dtos;
 
+import org.springframework.stereotype.Component;
+
+
 public class UserInterestsDTO {
     private int userId;
     private int categoryId;

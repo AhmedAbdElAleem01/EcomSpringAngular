@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface UserInterestsService {
-    boolean createUserInterests(UserInterestsDTO userInterests) throws SQLException;
+    boolean createUserInterests(UserInterestsDTO userInterests) ;
+
+
     List<UserInterestsDTO> getUserInterests(int userId);
 }

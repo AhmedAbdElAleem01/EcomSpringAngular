@@ -9,6 +9,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepo extends JpaRepository<User, Integer> {
     Optional<User> findByEmailAndPassword(String email , String password);
     boolean existsByUsername(String username);
+
     boolean existsByEmail(String email);
     List<User> findByUsernameContainingIgnoreCase(String usernamePart);
+
+    /* Find a user by email address */
+    Optional<User>  findByEmail(String email);
+
+    // save >>user
+
+
 }
