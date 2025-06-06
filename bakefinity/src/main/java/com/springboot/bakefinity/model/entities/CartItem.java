@@ -3,6 +3,7 @@ package com.springboot.bakefinity.model.entities;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "cartitem")
@@ -67,5 +68,27 @@ public class CartItem implements Serializable {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        CartItem cartItem = (CartItem) o;
+        return Objects.equals(id, cartItem.id)   && Objects.equals(quantity, cartItem.quantity);
+    }
+
+    @Override
+    public String toString() {
+        return "CartItem{" +
+                "id=" + id +
+                ", product=" + product +
+                ", user=" + user +
+                ", quantity=" + quantity +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, product, user, quantity);
     }
 }

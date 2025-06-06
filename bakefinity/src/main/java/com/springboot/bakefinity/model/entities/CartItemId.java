@@ -3,8 +3,10 @@ package com.springboot.bakefinity.model.entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
+
 @Embeddable
-public class CartItemId implements java.io.Serializable {
+public class CartItemId implements Serializable {
     private Integer productId;
     private Integer userId;
 
@@ -32,5 +34,14 @@ public class CartItemId implements java.io.Serializable {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CartItemId) {
+            CartItemId cartItemId = (CartItemId) obj;
+            return this.productId.equals(cartItemId.getProductId()) && this.userId.equals(cartItemId.getUserId());
+        }
+        return false;
     }
 }

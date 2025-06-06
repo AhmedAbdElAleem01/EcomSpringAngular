@@ -3,6 +3,7 @@ package com.springboot.bakefinity.services.interfaces;
 import com.springboot.bakefinity.exceptions.ValidationException;
 import com.springboot.bakefinity.model.dtos.ProductDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,5 +31,7 @@ public interface ProductService {
 
     boolean updateStockQuantity(int productId, int newQuantity) throws SQLException;
 
+    Page<ProductDTO> findAllFiltered(Integer categoryId, Double minPrice,
+                                     Double maxPrice, Pageable pageable);
 
 }

@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepo extends JpaRepository<User, Integer> {
-    public Optional<User> findByEmailAndPassword(String email , String password);
+    Optional<User> findByEmailAndPassword(String email , String password);
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);

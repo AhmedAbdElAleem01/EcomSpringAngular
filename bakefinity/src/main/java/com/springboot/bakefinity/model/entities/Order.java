@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
 import com.springboot.bakefinity.model.enums.OrderStatus;
 import com.springboot.bakefinity.model.enums.PaymentMethod;
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import jakarta.persistence.*;
 public class Order implements Serializable {
     private Integer id;
     private User user;
-    private Double totalCost;
+    private double totalCost;
     private PaymentMethod paymentMethod;
     private LocalDateTime orderedAt = LocalDateTime.now();
     private OrderStatus status;
@@ -30,14 +31,14 @@ public class Order implements Serializable {
         this.status = status;
     }
 
-    public Order(User user, Double totalCost, PaymentMethod paymentMethod, OrderStatus status) {
+    public Order(User user, double totalCost, PaymentMethod paymentMethod, OrderStatus status) {
         this.user = user;
         this.totalCost = totalCost;
         this.paymentMethod = paymentMethod;
         this.status = status;
     }
 
-    public Order(User user, Double totalCost, PaymentMethod paymentMethod, LocalDateTime orderedAt, OrderStatus status, Set<OrderItem> orderItems) {
+    public Order(User user, double totalCost, PaymentMethod paymentMethod, LocalDateTime orderedAt, OrderStatus status, Set<OrderItem> orderItems) {
         this.user = user;
         this.totalCost = totalCost;
         this.paymentMethod = paymentMethod;
@@ -68,11 +69,11 @@ public class Order implements Serializable {
     }
 
     @Column(name = "totalCost", nullable = false, precision = 15)
-    public Double getTotalCost() {
+    public double getTotalCost() {
         return this.totalCost;
     }
 
-    public void setTotalCost(Double totalCost) {
+    public void setTotalCost(double totalCost) {
         this.totalCost = totalCost;
     }
 

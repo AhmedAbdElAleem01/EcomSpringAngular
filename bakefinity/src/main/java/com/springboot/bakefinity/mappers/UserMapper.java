@@ -1,10 +1,11 @@
 package com.springboot.bakefinity.mappers;
 
 import com.springboot.bakefinity.model.dtos.UserRegistrationRequestDTO;
+import com.springboot.bakefinity.model.dtos.UserDTO;
+import com.springboot.bakefinity.model.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-
 import com.springboot.bakefinity.model.dtos.UserDTO;
 import com.springboot.bakefinity.model.entities.User;
 import java.time.LocalDateTime;

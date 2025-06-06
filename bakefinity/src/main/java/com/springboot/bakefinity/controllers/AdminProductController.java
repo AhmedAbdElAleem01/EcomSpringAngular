@@ -2,6 +2,7 @@ package com.springboot.bakefinity.controllers;
 
 import java.util.List;
 
+import com.springboot.bakefinity.model.dtos.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,8 +49,8 @@ public class AdminProductController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable int id, @RequestBody ProductDTO product) {
+    @PostMapping(path = "update/{id}",consumes = "application/x-www-form-urlencoded")
+    public ResponseEntity<?> updateProduct(@PathVariable int id, @ModelAttribute ProductDTO product) {
         try {
             ProductDTO updatedProduct = productService.updateProduct(id, product);
             return ResponseEntity.ok(updatedProduct);
@@ -63,7 +64,11 @@ public class AdminProductController {
         productService.deleteProduct(id);
         return ResponseEntity.ok("deleted");
     }
-
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductDTO>> searchProductsByName(@RequestParam String productName) {
+        List<ProductDTO> products = productService.searchProductsByName(productName);
+        return ResponseEntity.ok(products);
+    }
     
     
 }

@@ -130,7 +130,7 @@ public class User implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    @Column(name = "creditLimit", nullable = false, precision = 15)
+    @Column(nullable = false, precision = 15)
     public Double getCreditLimit() {
         return this.creditLimit;
     }

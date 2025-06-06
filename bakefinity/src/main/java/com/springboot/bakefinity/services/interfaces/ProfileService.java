@@ -3,14 +3,12 @@ package com.springboot.bakefinity.services.interfaces;
 import com.springboot.bakefinity.model.dtos.AddressDTO;
 import com.springboot.bakefinity.model.dtos.UserDTO;
 
-import java.util.Optional;
-
 public interface ProfileService {
-    Optional<UserDTO> getUserProfile(int userId);
-    Optional<AddressDTO> getAddress(int userId);
-    int updateCreditLimit(UserDTO user , Double newCreditLimit);
-    Optional<UserDTO> updateShippingInfo(UserDTO user , String country , String city , String street ,String BNo ,String mobile);
-    Optional<UserDTO> updateAccountDetails(UserDTO user , String username , String job , String email);
-    Optional<UserDTO> updatePassword(UserDTO user, String currentPass, String newPass, String confirmPass);
+    UserDTO getUserProfile(int userId);
+    AddressDTO getAddress(int userId);
+    UserDTO updateCreditLimit(int userId , Double newCreditLimit);
+    String updateShippingInfo(int userId , AddressDTO address , String phoneNumber);
+    UserDTO updateAccountDetails(int id, String name,String username,String email,String job);
+    String changePassword(int id, String oldPass, String newPass);
     boolean isUsernameTaken(String username);
 }
