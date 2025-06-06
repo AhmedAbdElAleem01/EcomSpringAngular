@@ -4,13 +4,12 @@ import com.springboot.bakefinity.model.dtos.*;
 import com.springboot.bakefinity.model.entities.*;
 import com.springboot.bakefinity.model.enums.OrderStatus;
 import com.springboot.bakefinity.model.enums.PaymentMethod;
+import com.springboot.bakefinity.services.impls.CartService;
 import com.springboot.bakefinity.services.interfaces.*;
 import com.springboot.bakefinity.utils.CartPrice;
 import com.springboot.bakefinity.utils.EmailUtil;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.sql.SQLException;
@@ -33,44 +32,44 @@ public class CheckoutController {
     private ProfileService profileService;
 
     @Autowired
-    private AddressService addressService;
+    private CartService cartService;
 
     @Autowired
     private CartPrice cartPrice;
 
 
-    @PostMapping
-    public ResponseEntity<String> checkout(@RequestBody @Valid BillingDetailsDTO body, @SessionAttribute(name = "user") UserDTO user, @SessionAttribute(name = "cart") Map<Integer, CartDTO> cart, HttpSession session) throws SQLException {
-        // check billing details
-
+    @PostMapping("user/{userId}/cart")
+    public ResponseEntity<String> checkout(@PathVariable Integer userId, @RequestBody @Valid BillingDetailsDTO body) throws SQLException {
+        List<CartItemDetailsDTO> cartItems = cartService.getCartItems(userId);
         // check stock quantity then create order
-        for(CartDTO cartItem : cart.values()){
+        for(CartItemDetailsDTO cartItem : cartItems) {
             int productId = cartItem.getProductId();
             if(productService.getProductById(productId).getStockQuantity() < cartItem.getQuantity()){
                 return ResponseEntity.badRequest().body("Error: Sorry, the requested quantity exceeds the available stock for some products. Please adjust your order accordingly.");
                 // return "redirect:/cart";
             }
         }
-        double totalCost = cartPrice.calculateTotalPrice(cart);
-        OrderDTO order = new OrderDTO(user.getId(), totalCost, PaymentMethod.CREDIT_CARD, LocalDateTime.now(), OrderStatus.SHIPPED);
+        double totalCost = cartPrice.calculateTotalPrice(cartItems);
+        UserDTO user = orderService.getUserById(userId);
+        if(totalCost > user.getCreditLimit()){
+            return ResponseEntity.badRequest().body("Error: The total cost of your cart exceeds your credit limit. Please remove some items or increase your credit to proceed.");
+        }
+        OrderDTO order = new OrderDTO(userId, totalCost, PaymentMethod.CREDIT_CARD, LocalDateTime.now(), OrderStatus.SHIPPED);
         int newOrderId = orderService.create(order);
         if(newOrderId <= 0) return ResponseEntity.internalServerError().body("Error in creating order!!!");
         System.out.println("step1 is done....");
 
         // update user's credit limit
-        UserDTO updatedUser = profileService.updateCreditLimit(user.getId(), user.getCreditLimit() - totalCost);
-        if(updatedUser !=null) {
-            System.out.printf("updated user: " + updatedUser);
-            session.setAttribute("user", updatedUser);
-        }
-        else{
+        UserDTO updatedUser = profileService.updateCreditLimit(userId, user.getCreditLimit() - totalCost);
+        if(updatedUser == null){
             orderService.updateStatus(newOrderId, OrderStatus.FAILED);
             return ResponseEntity.internalServerError().body("Error in updating user credit limit!!!");
         }
+        System.out.println("updated user: " + updatedUser);
         System.out.println("step2 is done....");
 
         // update stock quantity
-        for(CartDTO cartItem : cart.values()){
+        for(CartItemDetailsDTO cartItem : cartItems) {
             int productId = cartItem.getProductId();
             int newStockQuantity = productService.getProductById(productId).getStockQuantity() - cartItem.getQuantity();
             boolean updated = productService.updateStockQuantity(productId, newStockQuantity);
@@ -82,7 +81,7 @@ public class CheckoutController {
         System.out.println("step3 is done....");
 
         // create row in orderItems table for each cart item
-        for(CartDTO cartItem : cart.values()){
+        for(CartItemDetailsDTO cartItem : cartItems) {
             OrderItem orderItem = orderItemService.create(new OrderItem(new OrderItemId(cartItem.getProductId(), newOrderId), cartItem.getQuantity()));
             if(orderItem == null){
                 orderService.updateStatus(newOrderId, OrderStatus.FAILED);
@@ -93,62 +92,22 @@ public class CheckoutController {
 
         // send email
         StringBuilder orderDetails = new StringBuilder();
-        for(CartDTO cartItem : cart.values()){
-            int productId = cartItem.getProductId();
-            ProductDTO curProduct = productService.getProductById(productId);
-            orderDetails.append("Product Name: " + curProduct.getName() + "\nPrice: EGP " + curProduct.getPrice() + "\nQuantity: " + cartItem.getQuantity() + "\n");
+        for(CartItemDetailsDTO cartItem : cartItems) {
+            orderDetails.append("Product Name: " + cartItem.getName() + "\nPrice: EGP " + cartItem.getUnit_price() + "\nQuantity: " + cartItem.getQuantity() + "\n");
         }
         orderDetails.append("Total Cost: EGP " + totalCost);
         EmailUtil.sendOrderConfirmationEmail(user.getEmail(), user.getName(), orderDetails.toString());
         System.out.println("step5 is done....");
 
         // clear cart
-        cart.clear();
+        cartService.clearCart(userId);
 
         return ResponseEntity.ok("Order is placed successfully");  // return "redirect:/confirmation";
     }
 
 
-    // right side
-    @GetMapping("/cart/details")
-    public ResponseEntity<List<CartItemDetailsDTO>> getUserCartItems(@SessionAttribute("cart") Map<Integer, CartDTO> cart){
-        List<CartItemDetailsDTO> cartItemDetailsList = new ArrayList<>();
-        for(CartDTO cartItem : cart.values()){
-            ProductDTO product = productService.getProductById(cartItem.getProductId());
-            Double totalPerProduct = cartItem.getQuantity() * product.getPrice();
-            CartItemDetailsDTO cartItemDetails = new CartItemDetailsDTO(cartItem.getQuantity(), product.getName(), product.getDescription(), totalPerProduct);
-            cartItemDetailsList.add(cartItemDetails);
-        }
-        return ResponseEntity.ok(cartItemDetailsList);
-    }
-
-    @GetMapping("/cost")
-    public ResponseEntity<Double> getTotalCost(@SessionAttribute("cart") Map<Integer, CartDTO> cart){
-        return ResponseEntity.ok(cartPrice.calculateTotalPrice(cart));
-    }
-
-
-    // left side
-    @GetMapping("/billing/info")
-    public ResponseEntity<BillingDetailsDTO> getUserInfo(@SessionAttribute("user") UserDTO user){
-        Optional<AddressDTO> address = addressService.getAddressByUserId(user.getId());
-        BillingDetailsDTO details = new BillingDetailsDTO(user.getName(), user.getEmail(), user.getPhoneNumber(), address.get().getCountry(), address.get().getCity(), address.get().getStreet(), address.get().getBuildingNo());
-        return ResponseEntity.ok(details);
-    }
-
-
-    /* just for testing */
-    @PostMapping("/test/session")
-    public ResponseEntity<String> simulateSession(HttpSession session) {
-        // put a fake user on session
-        System.out.println("current user => " + orderService.getCurrentUser(58));
-        session.setAttribute("user", orderService.getCurrentUser(58)); // any user from DB
-
-        // put a fake cart on session
-        Map<Integer, CartDTO> cart = new HashMap<>();
-        cart.put(5, new CartDTO(new CartItemId(5, 58), 2));
-        session.setAttribute("cart", cart);
-
-        return ResponseEntity.ok("session is created");
+    @PostMapping("/user/{userId}/cost")
+    public ResponseEntity<Double> getTotalCost(@PathVariable Integer userId){
+        return ResponseEntity.ok(cartPrice.calculateTotalPrice(cartService.getCartItems(userId)));
     }
 }

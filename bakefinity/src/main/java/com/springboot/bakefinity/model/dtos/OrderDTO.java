@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class OrderDTO implements Serializable {
     private Integer id;
     private Integer userId;
-    private Double totalCost;
+    private double totalCost;
     private PaymentMethod paymentMethod;
     private LocalDateTime orderedAt;
     private OrderStatus status;
