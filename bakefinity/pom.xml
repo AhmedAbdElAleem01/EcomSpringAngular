@@ -111,7 +111,11 @@
 			<artifactId>jakarta.mail</artifactId>
 			<version>2.0.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.5.0</version> <!-- Use latest version -->
+		</dependency>
 		<!-- Spring Boot Starter Validation -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
