@@ -13,7 +13,7 @@ import java.util.Collection;
 @NoArgsConstructor
 public class JwtAuthentication implements Authentication {
     private String token;
-    private  Long userId;
+    private  Integer userId;
     private  String email;
     public JwtAuthentication(String token) {
         this.token = token;

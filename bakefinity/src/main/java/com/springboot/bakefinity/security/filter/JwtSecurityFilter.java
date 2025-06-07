@@ -32,7 +32,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
             try {
-                Long userId = jwtUtil.getUserIdFromToken(token);
+                Integer userId = jwtUtil.getUserIdFromToken(token);
                 String email = jwtUtil.getEmailFromToken(token);
                 List<String> authorities = jwtUtil.getAuthoritiesFromToken(token);
 

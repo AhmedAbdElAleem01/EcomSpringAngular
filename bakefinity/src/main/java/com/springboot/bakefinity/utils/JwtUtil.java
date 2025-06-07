@@ -22,10 +22,8 @@ public class JwtUtil {
         return new SecretKeySpec(keyBytes,0,keyBytes.length,"HmacSHA256");
     }
 
-    public String generateToken(Long userId, String email, List<? extends GrantedAuthority> authorities) {
-        List<String> roles = authorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+    public String generateToken(Integer userId, String email, List<String> authorities) {
+        List<String> roles = authorities;
 
         return Jwts.builder()
                 .setSubject(userId.toString())
@@ -37,13 +35,13 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Long getUserIdFromToken(String token) {
+    public Integer getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return Long.valueOf(claims.getSubject());
+        return Integer.valueOf(claims.getSubject());
     }
 
     public String getEmailFromToken(String token) {

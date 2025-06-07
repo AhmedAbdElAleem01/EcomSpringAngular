@@ -24,11 +24,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .addFilterBefore(jwtSecurityFilter, BasicAuthenticationFilter.class)
-
-                .httpBasic(Customizer.withDefaults()) // enables Basic auth
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/users").permitAll().requestMatchers("/admin/*").hasRole("ADMIN").anyRequest().hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_MANAGER"));
+                .addFilterBefore(jwtSecurityFilter, BasicAuthenticationFilter.class)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/users/*").permitAll()
+                        .requestMatchers("/admin/*").hasRole("ADMIN")
+                        .anyRequest().hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_MANAGER")
+                )
+                .httpBasic(httpBasic -> httpBasic.disable());  // <--- Disable Basic Auth explicitly
 
         return http.build();
     }

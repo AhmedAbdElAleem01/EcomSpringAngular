@@ -18,10 +18,11 @@ public interface UserMapper {
             @Mapping(target = "categories", ignore = true),
             @Mapping(target = "addresses", ignore = true),
             @Mapping(target = "orders", ignore = true),
-            @Mapping(target = "id", ignore = true)
+            @Mapping(target = "id", ignore = true),
+            @Mapping(expression = "java(user.getAuthorities().stream().map(a -> new Authority(a)).collect(java.util.stream.Collectors.toSet()))", target = "authorities")
     })
     User toEntity(UserDTO user);
-
+    @Mapping(expression = "java(user.getAuthorities().stream().map(a->a.getName()).toList())",target = "authorities")
     UserDTO toDto(User user);
 
    // @Mapping(target = "username", expression = "java(dto.getFname() + \" \" + dto.getLname())")
