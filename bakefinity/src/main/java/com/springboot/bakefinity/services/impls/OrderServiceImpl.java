@@ -66,4 +66,7 @@ public class OrderServiceImpl implements OrderService {
     public UserDTO getUserById(Integer userId){
         return userMapper.toDto(userRepo.findById(userId).orElse(null));
     }
+
+    @Override
+    public OrderDTO getOrderById(int id){return orderMapper.toDTO(orderRepo.findById(id).orElse(null));}
 }
