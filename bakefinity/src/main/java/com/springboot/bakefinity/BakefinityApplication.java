@@ -24,7 +24,6 @@ public class BakefinityApplication {
 	CommandLineRunner applicationInitializer(ProductService productService, UserRepo userRepo) {
 		return (args) -> {
 			System.out.println(productService.getAllProducts());
-			System.out.println(userRepo.findByEmail("john.doe@example.com").get());
 		};
 	}
 
