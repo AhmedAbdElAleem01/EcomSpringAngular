@@ -1,6 +1,7 @@
 package com.springboot.bakefinity.model.dtos;
 
 
+import com.springboot.bakefinity.model.entities.Authority;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.Getter;
@@ -36,6 +37,7 @@ public class UserRegistrationRequestDTO {
     @NotBlank
     private String username;
 
+    private List<Authority> authorities;
 
     private String name;
 

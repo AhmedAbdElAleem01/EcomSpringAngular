@@ -1,19 +1,21 @@
 package com.springboot.bakefinity.model.entities;
 
+
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "user",  uniqueConstraints = {
         @UniqueConstraint(columnNames = "email"),
         @UniqueConstraint(columnNames = "username")
 })
+@AllArgsConstructor
+@ToString(exclude = {"orders", "cartItems", "categories", "addresses"})
 public class User implements Serializable {
     private Integer id;
     private String name;
@@ -24,6 +26,17 @@ public class User implements Serializable {
     private Double creditLimit;
     private Date birthDate;
     private String job;
+
+    Set<Authority>authorities;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
     private LocalDateTime createdAt = LocalDateTime.now();
     private Set<Order> orders = new HashSet<Order>(0);
     private Set<CartItem> cartItems = new HashSet<CartItem>(0);

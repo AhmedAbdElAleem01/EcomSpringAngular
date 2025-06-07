@@ -21,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,6 +47,7 @@ public class UserServiceImpl implements UserLoginService , UserRegisterService {
 
     /****************************** Registration ***************************************/
     @Override
+    @Transactional
     public void createUser(UserRegistrationRequestDTO request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -58,8 +60,14 @@ public class UserServiceImpl implements UserLoginService , UserRegisterService {
             String hashedPassword = passwordEncoder.encode(request.getPassword());
 
             User user = userMapper.toUser(request, birthDate, hashedPassword);
-            userRepository.save(user);
-            userRepository.flush();
+            System.out.println("------------"+user);
+            user.getAuthorities().stream().forEach((a)->a.setUser(user));
+            try {
+                userRepository.save(user);
+                userRepository.flush();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
 
             Address address = new Address(user,
                     (request.getBuildingNo() == null || request.getBuildingNo().isBlank()) ? -1 : Integer.parseInt(request.getBuildingNo()),

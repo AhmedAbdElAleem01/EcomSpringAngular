@@ -4,17 +4,22 @@ package com.springboot.bakefinity.controllers;
 import com.springboot.bakefinity.mappers.AddressMapper;
 import com.springboot.bakefinity.mappers.UserMapper;
 import com.springboot.bakefinity.model.dtos.LoginRequestDto;
+import com.springboot.bakefinity.model.dtos.LoginResponseDto;
 import com.springboot.bakefinity.model.dtos.UserDTO;
 import com.springboot.bakefinity.model.dtos.UserRegistrationRequestDTO;
+import com.springboot.bakefinity.model.entities.Authority;
 import com.springboot.bakefinity.services.interfaces.UserInterestsService;
 import com.springboot.bakefinity.services.interfaces.UserLoginService;
 import com.springboot.bakefinity.services.interfaces.UserRegisterService;
+import com.springboot.bakefinity.utils.JwtUtil;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -29,11 +34,14 @@ public class UserController {
     private AddressMapper  addressMapper;
     @Autowired
     private UserInterestsService userInterestsService;
+    @Autowired
+    private JwtUtil jwtUtil;
 
 
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody UserRegistrationRequestDTO request) {
+        System.out.println(request);
         userRegisterService.createUser(request);
         return ResponseEntity.ok("User registered successfully!");
     }
@@ -42,9 +50,18 @@ public class UserController {
     /******************* user Login Api ************************/
     //http://localhost:8080/users/login    >> email,password   post
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(@RequestBody LoginRequestDto loginRequestDto, HttpSession session) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpSession session) {
+        System.out.println(loginRequestDto);
         UserDTO userDto = userAuthentication.login(loginRequestDto, session);
-        return ResponseEntity.ok(userDto);
+        System.out.println(userDto);
+        String token = jwtUtil.generateToken(
+                userDto.getId(),
+                userDto.getEmail(),
+                userDto.getAuthorities()
+        );
+        LoginResponseDto response = new LoginResponseDto(token, userDto);
+
+        return ResponseEntity.ok(response);
     }
 
     /******************* user logout Api ************************/
