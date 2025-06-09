@@ -35,12 +35,13 @@ public class SecurityConfig {
                 .addFilterBefore(jwtSecurityFilter, BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/*").permitAll()
+                        .requestMatchers("/profile/**").permitAll()
                         .requestMatchers("/swagger-ui/*").permitAll()
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/v3/**").permitAll()
                         .requestMatchers("/products/*").permitAll()
                         .requestMatchers("/categories/*").permitAll()
-                        .requestMatchers("/admin/*").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").permitAll()
                         .anyRequest().hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_MANAGER")
                 )
                 .httpBasic(httpBasic -> httpBasic.disable());  // <--- Disable Basic Auth explicitly
