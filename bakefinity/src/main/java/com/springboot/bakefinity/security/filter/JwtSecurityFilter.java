@@ -29,6 +29,10 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String token = getTokenFromRequest(request);
+        if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
+            filterChain.doFilter(request, response);  // allow preflight to pass
+            return;
+        }
 
         if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
             try {

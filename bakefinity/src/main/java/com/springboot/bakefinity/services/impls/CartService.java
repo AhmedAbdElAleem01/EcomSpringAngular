@@ -74,7 +74,8 @@ public class CartService {
     }
     public void removeCartItem(Integer userId, Integer productId) {
         try {
-            cartRepo.deleteByIdUserIdAndIdProductId(userId, productId);
+            cartRepo.deleteByUserIdAndProductId(userId, productId);
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove cart item", e);
         }
