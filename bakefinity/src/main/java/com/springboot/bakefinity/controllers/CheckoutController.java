@@ -38,7 +38,7 @@ public class CheckoutController {
     private CartPrice cartPrice;
 
 
-    @PostMapping("user/{userId}/cart")
+    @PostMapping("user/{userId}")
     public ResponseEntity<String> checkout(@PathVariable Integer userId, @RequestBody @Valid BillingDetailsDTO body) throws SQLException {
         List<CartItemDetailsDTO> cartItems = cartService.getCartItems(userId);
         // check stock quantity then create order
@@ -106,8 +106,15 @@ public class CheckoutController {
     }
 
 
-    @PostMapping("/user/{userId}/cost")
-    public ResponseEntity<Double> getTotalCost(@PathVariable Integer userId){
-        return ResponseEntity.ok(cartPrice.calculateTotalPrice(cartService.getCartItems(userId)));
+    @GetMapping("/user/{userId}/summary")
+    public ResponseEntity<Map<String, Object>> getCheckoutSummary(@PathVariable Integer userId) {
+        List<CartItemDetailsDTO> cartItems = cartService.getCartItems(userId);
+        double totalCost = cartPrice.calculateTotalPrice(cartItems);
+        UserDTO user = orderService.getUserById(userId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("cartItems", cartItems);
+        response.put("totalCost", totalCost);
+        response.put("user", user);
+        return ResponseEntity.ok(response);
     }
 }
