@@ -24,6 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
@@ -58,10 +59,15 @@ public class UserServiceImpl implements UserLoginService , UserRegisterService {
             Date birthDate = new SimpleDateFormat("MM-dd-yyyy").parse(request.getBirthdate());
             passwordEncoder=new BCryptPasswordEncoder();
             String hashedPassword = passwordEncoder.encode(request.getPassword());
-
+            System.out.println(request.getAuthorities());
+            request.setAuthorities(new ArrayList<>());
             User user = userMapper.toUser(request, birthDate, hashedPassword);
+            System.out.println("***************"+user);
+            Authority authority = new Authority("ROLE_USER");
+            authority.setUser(user);
+            user.getAuthorities().add(authority);
             System.out.println("------------"+user);
-            user.getAuthorities().stream().forEach((a)->a.setUser(user));
+            //user.getAuthorities().stream().forEach((a)->a.setUser(user));
             try {
                 userRepository.save(user);
                 userRepository.flush();
