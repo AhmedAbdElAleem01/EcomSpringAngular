@@ -18,7 +18,7 @@ import org.springframework.data.domain.Sort;
 
 import static com.springboot.bakefinity.utils.ResponseEntityUtil.*;
 
-@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 @RestController
 public class ShopController {
@@ -34,7 +34,9 @@ public class ShopController {
     }
     @GetMapping("/products/{id}")
     public ResponseEntity<ProductDTO> getProduct(@PathVariable int id){
+        System.out.println("oooooooooooooooooooooooooo"+id);
         ProductDTO Product = productService.getProductById(id);
+        System.out.println(Product);
         return createOkResponse(Product);
     }
 

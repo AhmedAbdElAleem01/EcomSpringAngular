@@ -31,6 +31,7 @@ public class CartController {
     @PutMapping
     public CartItemDetailsDTO updateCartItem(@RequestBody CartDTO cartDTO)
     {
+        cartDTO.setUserId(SecurityUtil.getCurrentUserId());
         return cartService.updateCartItem(cartDTO);
 
 
