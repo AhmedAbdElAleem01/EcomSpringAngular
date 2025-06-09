@@ -35,6 +35,9 @@ public class CheckoutController {
     private CartService cartService;
 
     @Autowired
+    private AddressService addressService;
+
+    @Autowired
     private CartPrice cartPrice;
 
 
@@ -107,7 +110,7 @@ public class CheckoutController {
 
 
     @GetMapping("/user/{userId}/summary")
-    public ResponseEntity<Map<String, Object>> getCheckoutSummary(@PathVariable Integer userId) {
+    public ResponseEntity<Map<String, Object>> getOrderSummary(@PathVariable Integer userId) {
         List<CartItemDetailsDTO> cartItems = cartService.getCartItems(userId);
         double totalCost = cartPrice.calculateTotalPrice(cartItems);
         UserDTO user = orderService.getUserById(userId);
@@ -115,6 +118,15 @@ public class CheckoutController {
         response.put("cartItems", cartItems);
         response.put("totalCost", totalCost);
         response.put("user", user);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/user/{userId}/info")
+    public ResponseEntity<Map<String, BillingDetailsDTO>> getBillingDetails(@PathVariable Integer userId) {
+        UserDTO user = orderService.getUserById(userId);
+        Optional<AddressDTO> address = addressService.getAddressByUserId(userId);
+        Map<String, BillingDetailsDTO> response = new HashMap<>();
+        response.put("billingDetails", new BillingDetailsDTO(user.getName(), user.getEmail(), user.getPhoneNumber(), address.get().getCountry(), address.get().getCity(), address.get().getStreet(), address.get().getBuildingNo()));
         return ResponseEntity.ok(response);
     }
 }

@@ -20,7 +20,7 @@ public class UserRegistrationRequestDTO {
     @NotBlank
     private String lname;
 
-    @Pattern(regexp = "\\d{10}")
+    @Pattern(regexp = "^01[0-2,5]\\d{8}$")
     private String phoneNumber;
 
     @NotBlank
