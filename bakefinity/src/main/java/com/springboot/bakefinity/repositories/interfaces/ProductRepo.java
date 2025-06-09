@@ -28,6 +28,9 @@ public interface ProductRepo extends JpaRepository<Product, Integer>, JpaSpecifi
     @NonNull
     Page<Product> findAll(@NonNull Pageable pageable);
 
+    @Query("SELECT p FROM Product p WHERE p.deleted = false")
+    Page<Product> findAllNotDeleted(Pageable pageable);
+
     Page<Product> findByCategoryId(int categoryId, Pageable pageable);
 
     int countByCategoryId(int categoryId);

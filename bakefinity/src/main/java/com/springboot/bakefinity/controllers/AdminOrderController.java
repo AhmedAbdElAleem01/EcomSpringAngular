@@ -33,10 +33,15 @@ public class AdminOrderController {
         return ResponseEntity.ok(orders);
     }
 
-    @GetMapping("/admin/orders/{id}")
-    public ResponseEntity<List<OrderItemDTO>> getOrderById(@PathVariable int id) {
+    @GetMapping("/admin/orders/orderDetails/{id}")
+    public ResponseEntity<List<OrderItemDTO>> getItemsOrderById(@PathVariable int id) {
         List<OrderItemDTO> orderItems = orderItemService.getOrderItemByOrderId(id);
         return ResponseEntity.ok(orderItems);
-    } 
+    }
+
+    @GetMapping("admin/orders/{id}")
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable int id) {
+        return ResponseEntity.ok(orderService.getOrderById(id));
+    }
     
 }

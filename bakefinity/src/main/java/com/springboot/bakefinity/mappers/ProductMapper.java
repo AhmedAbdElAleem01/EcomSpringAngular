@@ -11,15 +11,14 @@ public interface ProductMapper {
 
     @Mappings({
         @Mapping(source = "category.id", target = "categoryId"),
-        @Mapping(source = "category.name", target = "categoryName")
+        @Mapping(source = "category.name", target = "categoryName"),
+        @Mapping(target = "category", ignore = true),
     })
     ProductDTO toDto(Product product);
 
     @Mappings({
         @Mapping(target = "cartItems", ignore = true),
         @Mapping(target = "orderItems", ignore = true),
-        @Mapping(source = "categoryId", target = "category.id"),
-        @Mapping(source = "categoryName", target = "category.name"),
         @Mapping(target = "id", ignore = true)
     })
     Product toEntity(ProductDTO dto);

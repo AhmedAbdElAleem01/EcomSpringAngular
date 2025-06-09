@@ -1,5 +1,6 @@
 package com.springboot.bakefinity.model.dtos;
 
+import com.springboot.bakefinity.model.entities.Category;
 import lombok.*;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ public class ProductDTO implements Serializable {
     private String name;
     private int categoryId;
     private String categoryName;
+    private Category category;
     private String description;
     private Double price;
     private String imageUrl;

@@ -41,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryRepo categoryRepo;
 
-    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
+    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/images";
 
     @Transactional(readOnly = true)
     @Override
@@ -169,10 +169,9 @@ public class ProductServiceImpl implements ProductService {
 
         Category category = categoryRepo.findByName(product.getCategoryName())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
+        product.setCategory(category);
 
         Product toSave = productMapper.toEntity(product);
-        toSave.setCategory(category);
-
         return productMapper.toDto(productRepo.save(toSave));
     }
 
