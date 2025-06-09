@@ -9,17 +9,15 @@ import com.springboot.bakefinity.model.dtos.UserDTO;
 import com.springboot.bakefinity.model.entities.Address;
 import com.springboot.bakefinity.model.entities.User;
 import com.springboot.bakefinity.repositories.interfaces.AddressRepo;
-import com.springboot.bakefinity.repositories.interfaces.ProfileRepo;
 import com.springboot.bakefinity.repositories.interfaces.UserRepo;
 import com.springboot.bakefinity.services.interfaces.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
-    @Autowired
-    private ProfileRepo profileRepo;
-
     @Autowired
     private UserRepo userRepo;
 
@@ -31,6 +29,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Autowired
     private UserMapper userMapper;
+
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public UserDTO getUserProfile(int userId) {
@@ -45,7 +45,6 @@ public class ProfileServiceImpl implements ProfileService {
                 .orElseThrow(()->new ResourceNotFoundException("Address not found."));
         return addressMapper.toDTO(address);
     }
-
     @Override
     public UserDTO updateCreditLimit(int userId, Double newCreditLimit) {
         User user = userRepo.findById(userId)
@@ -55,44 +54,41 @@ public class ProfileServiceImpl implements ProfileService {
         user.setCreditLimit(newCreditLimit);
         return userMapper.toDto(userRepo.save(user));
     }
-
     @Override
-    public String updateShippingInfo(int userId, AddressDTO address, String phoneNumber) {
-        User updatedUser = userRepo.findById(userId)
-                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
-        Address updatedAddress = addressRepo.findByUser_Id(userId)
+    public String updateShippingInfo(int addressId, AddressDTO address) {
+        Address updatedAddress = addressRepo.findById(addressId)
                 .orElseThrow(()->new ResourceNotFoundException("Address not found."));
 
         if(address.getCountry() == null || address.getCountry().trim().isBlank()
           || address.getStreet()== null || address.getStreet().trim().isBlank()
           || address.getCity()== null || address.getCity().trim().isBlank()
-          || address.getBuildingNo()==null || phoneNumber==null || phoneNumber.trim().isBlank())
+          || address.getBuildingNo()==null)
             throw new ValidationException("Your shipping Info should not be empty.");
 
-        updatedUser.setPhoneNumber(phoneNumber);
         updatedAddress.setCountry(address.getCountry());
         updatedAddress.setStreet(address.getStreet());
         updatedAddress.setCity(address.getCity());
+        updatedAddress.setBuildingNo(address.getBuildingNo());
 
-        userRepo.save(updatedUser);
         addressRepo.save(updatedAddress);
-
         return "Successfully updated shipping info.";
     }
 
     @Override
-    public UserDTO updateAccountDetails(int id, String name, String username, String email, String job) {
-        User updatedUser = userRepo.findById(id)
+    public UserDTO updateAccountDetails(int id, UserDTO user) {
+        User updatedUser = userRepo.findById(user.getId())
                 .orElseThrow(()->new ResourceNotFoundException("User not found."));
-        if(name == null || name.trim().isBlank()
-        || username == null || username.trim().isBlank()
-        || email == null || email.trim().isBlank())
+        if(user.getName() == null || user.getName().trim().isBlank()
+        || user.getUsername() == null || user.getUsername().trim().isBlank()
+        || user.getEmail() == null || user.getEmail().trim().isBlank())
             throw new ValidationException("Your account details should not be empty.");
 
-        updatedUser.setName(name);
-        updatedUser.setUsername(username);
-        updatedUser.setEmail(email);
-        updatedUser.setJob(job);
+        updatedUser.setName(user.getName());
+        updatedUser.setUsername(user.getUsername());
+        updatedUser.setEmail(user.getEmail());
+        updatedUser.setPhoneNumber(user.getPhoneNumber());
+        updatedUser.setCreditLimit(user.getCreditLimit());
+
         return userMapper.toDto(userRepo.save(updatedUser));
     }
 
@@ -100,9 +96,14 @@ public class ProfileServiceImpl implements ProfileService {
     public String changePassword(int id, String oldPass, String newPass) {
         User user = userRepo.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("User not found."));
-        if (!oldPass.equals(user.getPassword()))
+        if (!BCrypt.checkpw(oldPass, user.getPassword()))
             throw new ValidationException("Wrong password.");
-        user.setPassword(newPass);
+
+        // hash password
+        passwordEncoder=new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(newPass);
+        user.setPassword(hashedPassword);
+
         userRepo.save(user);
         return "Successfully updated the password.";
     }
