@@ -7,8 +7,8 @@ public interface ProfileService {
     UserDTO getUserProfile(int userId);
     AddressDTO getAddress(int userId);
     UserDTO updateCreditLimit(int userId , Double newCreditLimit);
-    String updateShippingInfo(int userId , AddressDTO address , String phoneNumber);
-    UserDTO updateAccountDetails(int id, String name,String username,String email,String job);
+    String updateShippingInfo(int addressId , AddressDTO address);
+    UserDTO updateAccountDetails(int id, UserDTO user);
     String changePassword(int id, String oldPass, String newPass);
     boolean isUsernameTaken(String username);
 }

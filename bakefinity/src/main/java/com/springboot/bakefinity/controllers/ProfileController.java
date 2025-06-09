@@ -3,7 +3,6 @@ package com.springboot.bakefinity.controllers;
 import com.springboot.bakefinity.exceptions.ValidationException;
 import com.springboot.bakefinity.model.dtos.AddressDTO;
 import com.springboot.bakefinity.model.dtos.UserDTO;
-import com.springboot.bakefinity.model.entities.User;
 import com.springboot.bakefinity.services.interfaces.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,36 +24,25 @@ public class ProfileController {
         AddressDTO address = profileService.getAddress(id);
         return ResponseEntity.ok(address);
     }
-    @PostMapping("{id}/creditLimit")
-    public ResponseEntity<?> updateCreditLimit(@PathVariable int id, @RequestBody double creditLimit ) {
-        try {
-            UserDTO updatedUser = profileService.updateCreditLimit(id,creditLimit);
-            return ResponseEntity.ok(updatedUser);
-        }catch (ValidationException ex){
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
-    }
-    @PostMapping(path = "{id}/address" , consumes = "application/x-www-form-urlencoded")
-    public ResponseEntity<String> updateAddress(@PathVariable int id, @ModelAttribute AddressDTO address ,
-                                                @RequestParam String phoneNumber) {
+    @PostMapping(path = "{id}/address")
+    public ResponseEntity<String> updateAddress(@PathVariable int id, @RequestBody AddressDTO address) {
         try{
-            return ResponseEntity.ok(profileService.updateShippingInfo(id,address,phoneNumber));
+            return ResponseEntity.ok(profileService.updateShippingInfo(id,address));
         }catch (ValidationException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
     @PostMapping("{id}/accountDetails")
-    public ResponseEntity<?> updateAccountDetails(@PathVariable int id,
-                                                  @RequestParam String name,
-                                                  @RequestParam String username,
-                                                  @RequestParam String email,
-                                                  @RequestParam String job) {
+    public ResponseEntity<String> updateAccountDetails(@PathVariable int id,@RequestBody UserDTO user) {
         try{
-            UserDTO updatedUser = profileService.updateAccountDetails(id,name,username,email,job);
-            return ResponseEntity.ok(updatedUser);
+            UserDTO updatedUser = profileService.updateAccountDetails(id,user);
+            if(updatedUser != null){
+                return ResponseEntity.ok("Success");
+            }
         }catch (ValidationException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
+        return ResponseEntity.ok("Success");
     }
     @PostMapping(path = "{id}/password",consumes = "application/x-www-form-urlencoded")
     public ResponseEntity<?> changePassword(
