@@ -20,6 +20,7 @@ public interface ProductRepo extends JpaRepository<Product, Integer>, JpaSpecifi
 
     List<Product> findByCategoryId(int categoryId);
 
+    @Query("SELECT p FROM Product p WHERE p.deleted = false ORDER BY p.stockQuantity DESC ")
     List<Product> findAllByOrderByStockQuantityDesc(Pageable pageable);
 
     List<Product> findByNameContainingIgnoreCase(String name);
