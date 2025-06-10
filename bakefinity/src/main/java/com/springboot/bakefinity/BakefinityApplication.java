@@ -1,7 +1,9 @@
 package com.springboot.bakefinity;
 
 import com.springboot.bakefinity.repositories.interfaces.UserRepo;
+import com.springboot.bakefinity.services.interfaces.CategoryService;
 import com.springboot.bakefinity.services.interfaces.ProductService;
+import com.springboot.bakefinity.services.interfaces.UserInterestsService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,9 +18,9 @@ public class BakefinityApplication {
 
 
 	@Bean
-	CommandLineRunner applicationInitializer(ProductService productService, UserRepo userRepo) {
+	CommandLineRunner applicationInitializer(CategoryService service, UserRepo userRepo) {
 		return (args) -> {
-			System.out.println(productService.getAllProducts());
+			System.out.println(service.getUserInterestedCategories(11));
 		};
 	}
 

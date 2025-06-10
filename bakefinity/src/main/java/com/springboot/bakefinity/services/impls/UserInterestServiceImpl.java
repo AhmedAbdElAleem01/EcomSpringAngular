@@ -12,6 +12,8 @@ import com.springboot.bakefinity.services.interfaces.UserInterestsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 public class UserInterestServiceImpl implements UserInterestsService {
 
@@ -24,5 +26,10 @@ public class UserInterestServiceImpl implements UserInterestsService {
 
         return userInterestRepository.save(userInterests);
 
+    }
+
+    @Override
+    public Set<UserInterest> getUserInterestsById(int id) {
+        return userInterestRepository.getUserInterestsByIdUserId(id);
     }
 }

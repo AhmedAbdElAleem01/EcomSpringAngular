@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.data.domain.Sort;
 
 import static com.springboot.bakefinity.utils.ResponseEntityUtil.*;
@@ -70,6 +72,16 @@ public class ShopController {
         System.out.println(productService.findAllFiltered(catID, minPrice, maxPrice, pageable).getContent());
 
         return productService.findAllFiltered(catID, minPrice, maxPrice, pageable);
+    }
+
+    @GetMapping("/user-interests/{id}")
+    public Set<CategoryDTO> getUserInterestedCategories(@PathVariable int id) {
+        return categoryService.getUserInterestedCategories(id);
+    }
+
+    @GetMapping("/products/classic/{limit}")
+    public List<ProductDTO> getClassicProducts(@PathVariable int limit){
+        return productService.getClassicProducts(limit);
     }
 
 }

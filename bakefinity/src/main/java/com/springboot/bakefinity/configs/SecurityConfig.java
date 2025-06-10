@@ -39,9 +39,10 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/*").permitAll()
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/v3/**").permitAll()
-                        .requestMatchers("/products/*").permitAll()
-                        .requestMatchers("/categories/*").permitAll()
+                        .requestMatchers("/products/**").permitAll()
+                        .requestMatchers("/categories/**").permitAll()
                         .requestMatchers("/admin/**").permitAll()
+                        .requestMatchers("/user-interests/**").permitAll()
                         .anyRequest().hasAnyAuthority("ROLE_USER","ROLE_ADMIN","ROLE_MANAGER")
                 )
                 .httpBasic(httpBasic -> httpBasic.disable());  // <--- Disable Basic Auth explicitly
