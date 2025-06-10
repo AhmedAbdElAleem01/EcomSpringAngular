@@ -4,6 +4,9 @@ import com.springboot.bakefinity.model.entities.Product;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProductSpecs {
+    public static Specification<Product> isNotDeleted() {
+        return (root, query, cb) -> cb.isFalse(root.get("deleted"));
+    }
 
     public static Specification<Product> categoryEquals(Integer categoryId) {
         return (root, query, cb) -> cb.equal(root.get("category").get("id"), categoryId);

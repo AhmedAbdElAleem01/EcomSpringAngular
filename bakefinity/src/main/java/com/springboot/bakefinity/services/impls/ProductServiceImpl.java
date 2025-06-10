@@ -145,6 +145,8 @@ public class ProductServiceImpl implements ProductService {
             spec = spec.and(ProductSpecs.priceBetween(minPrice, maxPrice));
         }
 
+        spec = spec.and(ProductSpecs.isNotDeleted());
+
         return productRepo.findAll(spec, pageable)
                 .map(productMapper::toDto);
     }
@@ -178,7 +180,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public void deleteProduct(int id) {
-        Product product = productRepo.findById(id)
+        productRepo.findById(id)
                 .orElseThrow(() -> new ValidationException("Product not found with id: " + id));
         productRepo.deleteById(id);
     }
@@ -222,8 +224,7 @@ public class ProductServiceImpl implements ProductService {
     private String uploadProductImage(MultipartFile image) {
         try {
             File uploadPath = new File(UPLOAD_DIRECTORY);
-            if (!uploadPath.exists()) uploadPath.mkdirs();
-
+            
             Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, image.getOriginalFilename());
             Files.write(fileNameAndPath, image.getBytes());   // write
 
